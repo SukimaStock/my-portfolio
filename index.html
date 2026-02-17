@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <style>
+        /* --- 共通変数 --- */
+        :root {
+            --body-bg: #111;
+            --screen-bg: #0b0f14; 
+            --text-color: #f0f0f0;
+            --accent-color: #88FFAA; 
+        }
+
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'DotGothic16', sans-serif;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .phone-wrapper {
+            width: 310px;
+            display: flex;
+            flex-direction: column;
+            gap: 0; 
+            perspective: 1000px;
+        }
+
+        /* --- 上画面 (Texture: Noise) --- */
+        .phone-top {
+            background: linear-gradient(135deg, #444 0%, #222 100%);
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 
+                0 0 0 1px #111,
+                5px 10px 25px rgba(0,0,0,0.7),
+                inset 1px 1px 1px rgba(255,255,255,0.3);
+            border: 1px solid #000;
+            position: relative;
+            margin-bottom: 2px;
+        }
+
+        .inner-panel-top {
+            background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #555;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+        .inner-panel-top::before {
+            content: "";
+            position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.08;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+        }
+
+        /* 液晶画面 */
+        .screen-frame {
+            background-color: #000;
+            border-radius: 4px;
+            padding: 2px;
+            box-shadow: 0 0 0 1px #666;
+            position: relative; z-index: 1;
+        }
+
+        .screen {
+            background-color: var(--screen-bg);
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+            image-rendering: pixelated;
+            border: 1px solid #1a1a1a;
+            box-shadow: 
+                inset 0 0 0 1px rgba(255,255,255,0.1),
+                inset 0 0 20px rgba(0,0,0,1);
+        }
+
+        .screen::before {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 35%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.08), transparent);
+            pointer-events: none; z-index: 10;
+        }
+
+        /* ステータスバー */
+        .status-bar {
+            height: 32px;
+            background: linear-gradient(to bottom, rgba(10, 25, 40, 0.9), rgba(0, 15, 30, 0.85));
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 4px 6px;
+            color: #fff; position: relative; z-index: 5;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .status-left { display: flex; align-items: center; gap: 4px; padding-top: 2px;
+        }
+        .battery-icon { width: 14px; height: 8px; border: 1px solid #aaa; padding: 1px;
+            position: relative; display: inline-block; }
+        .battery-level { width: 60%; height: 100%;
+            background: linear-gradient(to bottom, #4f4, #0a0); }
+        .battery-icon::after { content: ""; position: absolute;
+            right: -3px; top: 2px; width: 2px; height: 4px; background: #aaa;
+        }
+        .status-right { display: flex; flex-direction: column; align-items: flex-end; line-height: 1;
+        }
+        .date-text { font-size: 9px; color: #ccc; margin-bottom: 2px;
+        }
+        .time-text { font-size: 14px; font-weight: bold; color: #fff;
+            text-shadow: 0 0 2px rgba(255,255,255,0.5); }
+        .status-mode-icon { width: 6px; height: 12px;
+            background: linear-gradient(to bottom, #0af 50%, #f80 50%); margin-left: 2px; display: inline-block; vertical-align: top;
+        }
+
+        /* ソフトキーガイド */
+        .soft-keys {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 26px;
+            background: #000; display: flex; border-top: 1px solid #333; z-index: 20;
+        }
+        .soft-key-btn {
+            flex: 1;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 11px; color: #fff; border-right: 1px solid #333;
+            background: linear-gradient(to bottom, #222, #000);
+            text-shadow: 0 1px 0 #000;
+        }
+        .soft-key-btn:last-child { border-right: none;
+        }
+        .soft-key-btn:nth-child(2) { font-weight: bold;
+        }
+
+        /* コンテンツエリア */
+        #home-view { 
+            padding-bottom: 30px;
+            transition: opacity 0.1s; 
+            opacity: 1;
+        }
+        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 6px; padding: 10px; margin-top: 5px; }
+        
+        .app-icon { display: flex;
+            flex-direction: column; align-items: center; cursor: pointer; padding: 5px; border-radius: 6px; border: 2px solid transparent;
+        }
+        
+        .app-icon.selected {
+            border: 2px solid var(--accent-color);
+            background-color: rgba(136, 255, 170, 0.15);
+            box-shadow: inset 0 0 10px rgba(136, 255, 170, 0.4);
+            animation: selectBlink 1.1s infinite alternate;
+        }
+        @keyframes selectBlink { from { border-color: rgba(136, 255, 170, 0.4);
+            box-shadow: inset 0 0 5px rgba(136, 255, 170, 0.2); } to { border-color: var(--accent-color);
+            box-shadow: inset 0 0 12px rgba(136, 255, 170, 0.5); } }
+
+        .icon-img { width: 44px;
+            height: 44px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px;
+        }
+        .icon-png { width: 32px; height: 32px; image-rendering: pixelated;
+        }
+        .icon-fallback { font-size: 20px; color: #888;
+        }
+        .icon-label { font-size: 10px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap;
+            text-overflow: ellipsis; text-shadow: 1px 1px 0 #000; }
+        .page-indicator { position: absolute;
+            bottom: 32px; right: 10px; font-size: 10px; color: #888; }
+
+        /* --- 詳細画面 --- */
+        .detail-view { 
+            display: none;
+            position: absolute; top: 40px; left: 0; width: 100%; height: calc(100% - 66px); 
+            background-color: #111; padding: 10px; box-sizing: border-box; 
+            z-index: 15;
+            transition: opacity 0.1s; opacity: 0;
+            
+            overflow-y: auto;
+            overflow-x: hidden;
+            /* スクロールバーは消す */
+            scrollbar-width: none;
+        }
+        .detail-view::-webkit-scrollbar { display: none;
+        }
+
+        .detail-title { color: var(--accent-color); border-bottom: 1px solid var(--accent-color); margin-bottom: 10px; font-size: 14px;
+        }
+        
+        .detail-item {
+            margin-bottom: 15px;
+            display: block;
+            position: relative; 
+        }
+
+        /* 画像コンテナ */
+        .img-container {
+            position: relative;
+            width: 100%;
+            border: 1px solid #333;
+            overflow: hidden; 
+        }
+        
+        .detail-img { width: 100%;
+            display: block; image-rendering: pixelated; }
+
+        /* 画像選択時のハイライト */
+        .detail-item.focused .img-container {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+
+        /* 読み込み演出用の幕 (Curtain) */
+        .img-curtain {
+            position: absolute;
+            bottom: 0; 
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000; 
+            border-top: 1px solid var(--accent-color);
+            z-index: 10;
+        }
+
+        .detail-desc { font-size: 12px; line-height: 1.6; color: #ddd; margin-bottom: 15px;
+            padding: 0 4px; }
+        
+        .note-link { 
+            color: #0ff;
+            text-decoration: none; border: 1px solid #0ff; padding: 4px 10px; font-size: 12px; 
+            background: rgba(0,255,255,0.1); border-radius: 2px; display: inline-block;
+        }
+        
+        /* リンク選択時のハイライト */
+        .detail-item.focused .note-link {
+            background: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 5px var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* ヒンジ */
+        .hinge { height: 6px;
+            background: linear-gradient(to right, #111, #333, #111); margin: 0 10px; z-index: -1; border-left: 1px solid #000; border-right: 1px solid #000;
+        }
+
+        /* --- 下キーパッド --- */
+        .phone-bottom {
+            background: #111;
+            border-radius: 12px;
+            padding: 2px;
+            box-shadow: 0 0 0 1px #333, inset 1px 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .inner-panel-bottom {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #000;
+            position: relative;
+        }
+        .inner-panel-bottom::before {
+            content: "";
+            position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.12; mix-blend-mode: overlay;
+            background: repeating-linear-gradient(0deg, transparent, transparent 1px, #fff 1px, #fff 2px);
+        }
+
+        .controls { display: flex; flex-direction: column; background: #000; padding: 1px; gap: 1px;
+            position: relative; z-index: 1; }
+
+        .nav-keys { display: grid; grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 40px 45px 40px; gap: 1px; background: #000; }
+
+        .num-keys { display: grid;
+            grid-template-columns: repeat(3, 1fr); gap: 1px; background: #000; margin-top: 1px; }
+
+        .key, .num-key {
+            background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+            color: #ddd; display: flex; justify-content: center; align-items: center;
+            font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; position: relative;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); text-shadow: 0 -1px 0 #000;
+        }
+        .key:active, .num-key:active, .key.pressed, .num-key.pressed {
+            background: #000;
+            color: #888; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .key-center {
+            background: radial-gradient(circle at 50% 30%, #444, #111);
+            border: 1px solid #666; 
+            border-radius: 4px; z-index: 10;
+            box-shadow: 0 0 0 1px #000, inset 1px 1px 2px rgba(255,255,255,0.3), 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 11px; color: #fff; text-shadow: 0 1px 1px #000;
+        }
+        .key-center:active, .key-center.pressed {
+            background: #111;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transform: translateY(1px);
+        }
+
+        .key-page { font-size: 10px;
+            color: #aaa; border-bottom: 2px solid #005f99; }
+        .key-power { color: #e74c3c; font-size: 14px;
+            border-bottom: 2px solid #e74c3c; }
+        
+        /* --- 数字キーのレイアウト変更 (Updated) --- */
+        .num-key {
+            height: 35px;
+            position: relative;          /* 子要素(サブ文字)を絶対配置するために必要 */
+            display: flex;
+            align-items: center;
+            justify-content: center;     /* 数字をど真ん中に配置 */
+            font-family: Arial, sans-serif;
+            font-size: 16px;             /* 視認性を良くするため少し大きく */
+            color: #fff;
+            font-variant-numeric: tabular-nums; /* 数字の幅を揃える */
+            line-height: 1;
+        }
+
+        /* 数字本体(位置微調整用) */
+        .num-main {
+            display: block;
+            transform: translateY(-2px); /* ほんの少し上にずらすとバランスが良い */
+            font-weight: bold;           /* 数字をくっきりさせる */
+        }
+
+        /* 右下のアルファベット */
+        .num-sub {
+            position: absolute;
+            right: 4px;
+            bottom: 3px;
+            font-size: 7px;
+            color: #666;
+            font-weight: normal;
+            pointer-events: none;        /* クリック判定を邪魔しないように */
+            letter-spacing: -0.5px;      /* 文字間を詰めてギュッとさせる */
+        }
+
+        .logo-text {
+            text-align: center;
+            font-size: 10px; color: #666; letter-spacing: 2px; margin-top: 5px; font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-wrapper">
+    <div class="phone-top">
+        <div class="inner-panel-top">
+            <div class="screen-frame">
+                <div class="screen">
+                    <div class="status-bar">
+                        <div class="status-left">
+                             <div class="battery-icon"><div class="battery-level"></div></div>
+                            <span style="font-size:10px;">📶</span>
+                            <span style="font-size:10px; color:#aaa; margin-left:2px;"></span>
+                        </div>
+                        <div style="display:flex;">
+                            <div class="status-right">
+                                <div class="date-text" id="date-display">1/1 Mon</div>
+                                <div class="time-text" id="clock">12:00</div>
+                            </div>
+                            <div class="status-mode-icon"></div>
+                        </div>
+                    </div>
+
+                    <div id="home-view">
+                        <div class="app-grid" id="app-grid"></div>
+                        <div class="page-indicator" id="page-num">1/3</div>
+                    </div>
+
+                    <div id="detail-view" class="detail-view">
+                        <div class="detail-content" id="detail-content"></div>
+                    </div>
+
+                     <div class="soft-keys">
+                        <div class="soft-key-btn" id="guide-left">◀︎ 前へ</div>
+                        <div class="soft-key-btn" id="guide-center">決定</div>
+                        <div class="soft-key-btn" id="guide-right">次へ ▶︎</div>
+                     </div>
+
+                    <div id="boot-screen" style="position:absolute;
+                        top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:999; display:flex; flex-direction:column; justify-content:center;
+                        align-items:center;">
+                        <div style="font-size:24px;
+                            letter-spacing:4px; animation:blink 0.8s infinite alternate;">hamamah</div>
+                        <div style="font-size:10px;
+                            color:#888; margin-top:5px;">Connecting...</div>
+                        <style>@keyframes blink { from{opacity:0.4;} to{opacity:1;} }</style>
+                    </div>
+
+                </div>
+            </div>
+            <div class="logo-text">SukimaStock</div>
+        </div>
+     </div>
+
+    <div class="hinge"></div>
+
+    <div class="phone-bottom">
+        <div class="inner-panel-bottom">
+            <div class="controls">
+                
+                <div class="nav-keys">
+                    <div class="key key-page" id="btn-soft-left">◀︎ Page</div>
+                     <div class="key" id="btn-up">▲</div>
+                    <div class="key key-page" id="btn-soft-right">Page ▶︎</div>
+
+                    <div class="key" id="btn-left">◀︎</div>
+                    <div class="key key-center" id="btn-enter">●</div>
+                    <div class="key" id="btn-right">▶︎</div>
+
+                    <div class="key" style="background:#1a1a1a;
+                        cursor:default;"></div>
+                    <div class="key" id="btn-down">▼</div>
+                    <div class="key key-power" id="btn-power">⏻</div>
+                </div>
+
+                <div class="num-keys">
+                    <div class="num-key">
+                        <span class="num-main">1</span>
+                        <span class="num-sub"></span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">2</span>
+                        <span class="num-sub">ABC</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">3</span>
+                        <span class="num-sub">DEF</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">4</span>
+                        <span class="num-sub">GHI</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">5</span>
+                        <span class="num-sub">JKL</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">6</span>
+                        <span class="num-sub">MNO</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">7</span>
+                        <span class="num-sub">PQRS</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">8</span>
+                        <span class="num-sub">TUV</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">9</span>
+                        <span class="num-sub">WXYZ</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">*</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">0</span>
+                    </div>
+
+                    <div class="num-key">
+                        <span class="num-main">#</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* =========================================
+       DATA
+       ========================================= */
+    const apps = [
+        {
+            id: 1,
+            title: "SteamClock",
+            icon: "1.png", 
+            image: "https://assets.st-note.com/production/uploads/images/249412945/picture_pc_e67856a041e77ef1d5670b50d1aa2e1f.png", 
+            desc: "一番最初に作成したスチームパンク風時計アプリです。",
+            link: "https://note.com/hamamah/n/n55f12e684c13?sub_rt=share_b"
+        },
+        {
+            id: 2,
+            title: "CoffeeFactory",
+            icon: "2.png",
+            image: "https://assets.st-note.com/production/uploads/images/249478392/picture_pc_400c563f39f55fa34f7c22ed9154d7e6.png",
+            desc: "ほっと一息つきたい時に開く、絵本のようなコーヒータイマーアプリです。",
+            link: "https://note.com/hamamah/n/ndd00e6f70f55?sub_rt=share_b"
+        },
+        {
+            id: 3,
+            title: "AmberTime",
+            icon: "3.png",
+            image: "https://assets.st-note.com/production/uploads/images/251298722/picture_pc_41f4941b5fb971116403bf7f36b4075d.png",
+            desc: "ドット絵で作成した、正解のないウイスキー蒸留所経営ゲームです。",
+            link: "https://note.com/hamamah/n/n2123726a637c?sub_rt=share_b"
+        },
+        ...Array.from({ length: 18 }, (_, i) => ({
+            id: i + 4,
+            title: `アプリ${i + 4}`,
+            icon: '', 
+            desc: `【アプリ No.${i + 4}】\n\nこれはダミーのアプリデータです。\n\n画像を読み込む際、上から下にジワジワ表示される「ダイヤルアップ回線」を再現しています。\n\n▼キーを押してスクロールし、一番下まで行くとリンクが開けます。`,
+            image: `https://via.placeholder.com/240x160/222/555?text=App+${i+4}`, 
+            link: '#',
+            isDummy: true
+        }))
+    ];
+    
+    /* =========================================
+       SYSTEM
+       ========================================= */
+    let currentPage = 0;
+    let cursorIndex = 0;
+    let inDetailMode = false;
+    let scrollLock = false; 
+
+    const ITEMS_PER_PAGE = 9;
+    const TOTAL_PAGES = Math.ceil(apps.length / ITEMS_PER_PAGE);
+
+    const gridEl = document.getElementById('app-grid');
+    const pageNumEl = document.getElementById('page-num');
+    const homeView = document.getElementById('home-view');
+    const detailView = document.getElementById('detail-view');
+    const detailContent = document.getElementById('detail-content');
+    const guideLeft = document.getElementById('guide-left');
+    const guideCenter = document.getElementById('guide-center');
+    const guideRight = document.getElementById('guide-right');
+    
+    window.onload = () => {
+        setTimeout(() => {
+            const boot = document.getElementById('boot-screen');
+            boot.style.opacity = '0';
+            boot.style.transition = 'opacity 0.8s';
+            setTimeout(() => { boot.style.display = 'none'; }, 800);
+        }, 1500);
+        renderGrid();
+        updateClock();
+
+        // ★追加: ホイール操作を無効化(キー操作限定にするため)
+        detailView.addEventListener('wheel', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    };
+
+    function renderGrid() {
+        gridEl.innerHTML = '';
+        const start = currentPage * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        const pageApps = apps.slice(start, end);
+        pageApps.forEach((app, index) => {
+            const div = document.createElement('div');
+            div.className = `app-icon ${index === cursorIndex ? 'selected' : ''}`;
+            const iconHTML = app.icon
+                ? `<img class="icon-png" src="${app.icon}">`
+                : `<span class="icon-fallback">📱</span>`;
+
+             div.innerHTML = `<div class="icon-img">${iconHTML}</div><div class="icon-label">${app.title}</div>`;
+            div.onclick = () => {
+                cursorIndex = index;
+                renderGrid();
+                openDetail();
+            };
+            gridEl.appendChild(div);
+         });
+        pageNumEl.textContent = `${currentPage + 1}/${TOTAL_PAGES}`;
+        updateGuide();
+    }
+
+    function transitionScreen(callback) {
+        if (inDetailMode) detailView.style.opacity = '0';
+        else homeView.style.opacity = '0';
+
+        setTimeout(() => {
+            callback();
+            if (inDetailMode) detailView.style.opacity = '1';
+            else homeView.style.opacity = '1';
+        }, 100);
+    }
+
+    // 読み込み演出
+    function playLoadingAnimation() {
+        const curtain = document.getElementById('loading-curtain');
+        if (!curtain) return;
+
+        curtain.style.transition = 'none';
+        curtain.style.height = '100%';
+
+        let height = 100;
+        const interval = setInterval(() => {
+            if (Math.random() < 0.15) return;
+            if (Math.random() < 0.05) {
+                height += Math.random() * 4;
+            } else {
+                height -= Math.random() * 3;
+            }
+            if (height <= 0) {
+                height = 0;
+                clearInterval(interval);
+            }
+            if (height > 100) height = 100;
+            curtain.style.height = height + '%';
+        }, 60);
+    }
+
+    // ★スクロール最下部判定
+    function isAtBottom(el, thresholdPx = 6) {
+        // コンテンツが少なくてスクロール不要な場合もTrue扱い
+        if (el.scrollHeight <= el.clientHeight) return true;
+        return (el.scrollTop + el.clientHeight) >= (el.scrollHeight - thresholdPx);
+    }
+
+    // ★最下部に来たらリンクをフォーカスする
+    function updateDetailFocusByScroll() {
+        const container = document.getElementById('detail-view');
+        // HTML側でID="detail-item-link"を付与した要素を取得
+        const linkItem = document.getElementById('detail-item-link'); 
+        if (!container || !linkItem) return;
+        const focused = isAtBottom(container, 6);
+
+        // toggleでクラス着脱
+        linkItem.classList.toggle('focused', focused);
+        // ガイド表示
+        guideCenter.textContent = focused ? "開く" : "—";
+    }
+
+    function stepScroll(direction) {
+        const container = document.getElementById('detail-view');
+        if (!container) return;
+        
+        if (scrollLock) return;
+        scrollLock = true;
+
+        const step = 12;
+        // overflow-y:auto にしたので scrollTop が機能します
+        container.scrollTop += direction * step;
+        setTimeout(() => {
+            scrollLock = false;
+        }, 80);
+    }
+
+    function openDetail() {
+        transitionScreen(() => {
+            const appIndex = currentPage * ITEMS_PER_PAGE + cursorIndex;
+            if (appIndex >= apps.length) return;
+            inDetailMode = true;
+
+            const app = apps[appIndex];
+            const imgUrl = app.image || 'https://via.placeholder.com/240x160/222/555?text=NOW+LOADING...';
+            
+            detailContent.innerHTML = `
+                <div class="detail-title">${app.title}</div>
+                
+                <div class="detail-item">
+                    <div class="img-container">
+                        <img src="${imgUrl}" class="detail-img">
+                        <div id="loading-curtain" class="img-curtain"></div>
+                    </div>
+                </div>
+                
+                <div class="detail-desc">${app.desc.replace(/\n/g, '<br>')}</div>
+                
+                <div id="detail-item-link" class="detail-item">
+                    <a href="${app.link}" target="_blank" class="note-link" id="target-link">Note記事を読む</a>
+                </div>
+
+                 <div style="height:20px;"></div>
+            `;
+            homeView.style.display = 'none';
+            detailView.style.display = 'block';
+            updateGuide();
+            
+            // ★detail表示直後に一回更新 + スクロール監視
+            setTimeout(() => {
+                updateDetailFocusByScroll();
+                // 読み込み演出開始
+                playLoadingAnimation();
+            }, 50);
+            // ★スクロールイベントでフォーカス判定
+            detailView.onscroll = () => updateDetailFocusByScroll();
+        });
+    }
+
+    function closeDetail() {
+        transitionScreen(() => {
+            inDetailMode = false;
+            homeView.style.display = 'block';
+            detailView.style.display = 'none';
+            updateGuide();
+            // イベントリスナ解除(null代入)
+            detailView.onscroll = null;
+         });
+    }
+
+    function updateGuide() {
+        if (inDetailMode) {
+            guideLeft.textContent = "戻る";
+            guideRight.textContent = "";
+            guideCenter.textContent = "—"; // 初期状態
+        } else {
+            guideLeft.textContent = "◀︎ 前へ";
+            guideCenter.textContent = "決定";
+            guideRight.textContent = "次へ ▶︎";
+        }
+    }
+
+    function openLink() {
+        const link = document.getElementById('target-link');
+        if(link && link.getAttribute('href') !== '#') {
+            window.open(link.href, '_blank');
+        }
+    }
+
+    function handleInput(key) {
+        const btn = document.getElementById(`btn-${key}`);
+        if(btn) {
+            btn.classList.add('pressed');
+            setTimeout(() => btn.classList.remove('pressed'), 100);
+        }
+
+        if (key === 'power') {
+            transitionScreen(() => {
+                inDetailMode = false;
+                homeView.style.display = 'block';
+                detailView.style.display = 'none';
+                currentPage = 0;
+                cursorIndex = 0;
+                renderGrid();
+            });
+            return;
+        }
+
+        /* ★変更: 詳細画面の操作ロジックをリクエスト通りに刷新 */
+        if (inDetailMode) {
+            
+            if (key === 'back' || key === 'soft-left') {
+                closeDetail();
+                return;
+            }
+
+            // ▲/▼:カクカクスクロール
+            if (key === 'down') { stepScroll(1);
+                return; }
+            if (key === 'up')   { stepScroll(-1);
+                return; }
+
+            // 決定:最下部(リンクフォーカス状態)なら開く
+            if (key === 'enter' || key === 'guide-center') {
+                const container = document.getElementById('detail-view');
+                if (container && isAtBottom(container, 6)) {
+                    openLink();
+                }
+                return;
+            }
+
+        } else {
+            // ホーム画面(Grid)の操作
+            const currentItemsCount = Math.min(ITEMS_PER_PAGE, apps.length - currentPage * ITEMS_PER_PAGE);
+            if (key === 'soft-left' || key === '1') {
+                if (currentPage > 0) {
+                    transitionScreen(() => {
+                        currentPage--;
+                        cursorIndex = ITEMS_PER_PAGE - 1;
+                        renderGrid();
+                    });
+                }
+            } else if (key === 'soft-right' || key === '3') {
+                if (currentPage < TOTAL_PAGES - 1) {
+                    transitionScreen(() => {
+                        currentPage++;
+                        cursorIndex = 0;
+                        renderGrid();
+                    });
+                }
+            } else if (key === 'right') {
+                if (cursorIndex < currentItemsCount - 1) {
+                    cursorIndex++;
+                    renderGrid();
+                } else {
+                    if (currentPage < TOTAL_PAGES - 1) {
+                        transitionScreen(() => {
+                            currentPage++;
+                            cursorIndex = 0;
+                            renderGrid();
+                        });
+                    }
+                }
+            } else if (key === 'left') {
+                if (cursorIndex > 0) {
+                    cursorIndex--;
+                    renderGrid();
+                } else {
+                    if (currentPage > 0) {
+                        transitionScreen(() => {
+                            currentPage--;
+                            cursorIndex = ITEMS_PER_PAGE - 1;
+                            renderGrid();
+                        });
+                    }
+                }
+            } else if (key === 'down') {
+                if (cursorIndex + 3 < currentItemsCount) {
+                    cursorIndex += 3;
+                    renderGrid();
+                }
+            } else if (key === 'up') {
+                if (cursorIndex - 3 >= 0) {
+                    cursorIndex -= 3;
+                    renderGrid();
+                }
+            } else if (key === 'enter') {
+                openDetail();
+            }
+        }
+    }
+
+    const keys = ['up','down','left','right','enter','back','soft-left','soft-right','power'];
+    keys.forEach(k => {
+        const el = document.getElementById(`btn-${k}`);
+        if(el) el.onclick = () => handleInput(k);
+    });
+    document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+            case 'ArrowUp': e.preventDefault(); handleInput('up'); break;
+            case 'ArrowDown': e.preventDefault(); handleInput('down'); break;
+            case 'ArrowLeft': handleInput('left'); break;
+            case 'ArrowRight': handleInput('right'); break;
+            case 'Enter': handleInput('enter'); break;
+            case 'Backspace': handleInput('back'); break;
+            case 'Escape': handleInput('power'); break;
+            case '1': handleInput('soft-left'); break; 
+            case '3': handleInput('soft-right'); break; 
+        }
+    });
+    function updateClock() {
+        const now = new Date();
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const day = days[now.getDay()];
+        document.getElementById('date-display').textContent = `${month}/${date} ${day}`;
+        const h = String(now.getHours()); 
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('clock').textContent = `${h}:${m}`;
+    }
+    setInterval(updateClock, 1000);
+
+</script>
+</body>
+</html>
