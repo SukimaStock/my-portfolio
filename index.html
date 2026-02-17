@@ -24,6 +24,8 @@
             font-family: 'DotGothic16', sans-serif;
             color: var(--text-color);
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .phone-wrapper {
@@ -100,24 +102,83 @@
             color: #fff; position: relative; z-index: 5;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .status-left { display: flex; align-items: center; gap: 4px; padding-top: 2px;
+        .status-left { display: flex; align-items: center; gap: 6px; padding-top: 2px; }
+        
+        /* Battery */
+        .battery-icon { width: 14px; height: 8px; border: 1px solid #aaa; padding: 1px; position: relative; display: inline-block; margin-right: 2px; }
+        .battery-level { width: 60%; height: 100%; background: linear-gradient(to bottom, #4f4, #0a0); }
+        .battery-icon::after { content: ""; position: absolute; right: -3px; top: 2px; width: 2px; height: 4px; background: #aaa; }
+
+        /* Signal Icon (CSS Draw) - 後期ガラケー風 */
+        .signal {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: space-between; /* 均等配置 */
+            gap: 1px;
+            width: 15px;
+            height: 11px;
+            padding: 1px 2px;
+            box-sizing: border-box;
+            /* 枠線ありスタイル */
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 2px;
         }
-        .battery-icon { width: 14px; height: 8px; border: 1px solid #aaa; padding: 1px;
-            position: relative; display: inline-block; }
-        .battery-level { width: 60%; height: 100%;
-            background: linear-gradient(to bottom, #4f4, #0a0); }
-        .battery-icon::after { content: ""; position: absolute;
-            right: -3px; top: 2px; width: 2px; height: 4px; background: #aaa;
+
+        .signal .bar {
+            width: 2px;
+            background: rgba(255,255,255,0.9);
+            opacity: 0.2; /* ベースの薄さ */
+            border-radius: 1px 1px 0 0;
         }
-        .status-right { display: flex; flex-direction: column; align-items: flex-end; line-height: 1;
+
+        /* 高さ(左→右で高く) */
+        .signal .b1{ height: 2px; }
+        .signal .b2{ height: 4px; }
+        .signal .b3{ height: 6px; }
+        .signal .b4{ height: 8px; } /* 枠内に収まるよう微調整 */
+
+        /* data-level で制御 */
+        .signal[data-level="0"] .bar{ opacity: 0.15; }
+        .signal[data-level="1"] .b1{ opacity: 1; }
+        .signal[data-level="2"] .b1,.signal[data-level="2"] .b2{ opacity: 1; }
+        .signal[data-level="3"] .b1,.signal[data-level="3"] .b2,.signal[data-level="3"] .b3{ opacity: 1; }
+        .signal[data-level="4"] .bar{ opacity: 1; }
+
+        /* 圏外の × */
+        .signal .x {
+            position: absolute;
+            right: -6px;
+            bottom: -3px;
+            font-size: 10px;
+            line-height: 1;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: #f55;
+            opacity: 0;
+            text-shadow: 1px 1px 0 #000;
         }
-        .date-text { font-size: 9px; color: #ccc; margin-bottom: 2px;
+
+        .signal[data-mode="noservice"] .bar{ opacity: 0.1; }
+        .signal[data-mode="noservice"] .x{ opacity: 1; }
+
+        /* 検索中アニメーション */
+        @keyframes sigScan {
+            0%{ opacity: 0.2; }
+            50%{ opacity: 1; }
+            100%{ opacity: 0.2; }
         }
-        .time-text { font-size: 14px; font-weight: bold; color: #fff;
-            text-shadow: 0 0 2px rgba(255,255,255,0.5); }
-        .status-mode-icon { width: 6px; height: 12px;
-            background: linear-gradient(to bottom, #0af 50%, #f80 50%); margin-left: 2px; display: inline-block; vertical-align: top;
-        }
+        .signal[data-mode="search"] .bar{ opacity: 0.2; }
+        .signal[data-mode="search"] .b1{ animation: sigScan 0.8s infinite; }
+        .signal[data-mode="search"] .b2{ animation: sigScan 0.8s 0.15s infinite; }
+        .signal[data-mode="search"] .b3{ animation: sigScan 0.8s 0.30s infinite; }
+        .signal[data-mode="search"] .b4{ animation: sigScan 0.8s 0.45s infinite; }
+
+
+        .status-right { display: flex; flex-direction: column; align-items: flex-end; line-height: 1; }
+        .date-text { font-size: 9px; color: #ccc; margin-bottom: 2px; }
+        .time-text { font-size: 14px; font-weight: bold; color: #fff; text-shadow: 0 0 2px rgba(255,255,255,0.5); }
+        .status-mode-icon { width: 6px; height: 12px; background: linear-gradient(to bottom, #0af 50%, #f80 50%); margin-left: 2px; display: inline-block; vertical-align: top; }
 
         /* ソフトキーガイド */
         .soft-keys {
@@ -132,10 +193,8 @@
             background: linear-gradient(to bottom, #222, #000);
             text-shadow: 0 1px 0 #000;
         }
-        .soft-key-btn:last-child { border-right: none;
-        }
-        .soft-key-btn:nth-child(2) { font-weight: bold;
-        }
+        .soft-key-btn:last-child { border-right: none; }
+        .soft-key-btn:nth-child(2) { font-weight: bold; }
 
         /* コンテンツエリア */
         #home-view { 
@@ -143,12 +202,9 @@
             transition: opacity 0.1s; 
             opacity: 1;
         }
-        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 6px; padding: 10px; margin-top: 5px; }
+        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 10px; margin-top: 5px; }
         
-        .app-icon { display: flex;
-            flex-direction: column; align-items: center; cursor: pointer; padding: 5px; border-radius: 6px; border: 2px solid transparent;
-        }
+        .app-icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 5px; border-radius: 6px; border: 2px solid transparent; }
         
         .app-icon.selected {
             border: 2px solid var(--accent-color);
@@ -156,21 +212,19 @@
             box-shadow: inset 0 0 10px rgba(136, 255, 170, 0.4);
             animation: selectBlink 1.1s infinite alternate;
         }
-        @keyframes selectBlink { from { border-color: rgba(136, 255, 170, 0.4);
-            box-shadow: inset 0 0 5px rgba(136, 255, 170, 0.2); } to { border-color: var(--accent-color);
-            box-shadow: inset 0 0 12px rgba(136, 255, 170, 0.5); } }
+        @keyframes selectBlink { 
+            from { border-color: rgba(136, 255, 170, 0.4); box-shadow: inset 0 0 5px rgba(136, 255, 170, 0.2); } 
+            to { border-color: var(--accent-color); box-shadow: inset 0 0 12px rgba(136, 255, 170, 0.5); } 
+        }
 
-        .icon-img { width: 44px;
-            height: 44px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px;
+        .icon-img { 
+            width: 44px; height: 44px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; 
+            background: rgba(255,255,255,0.05); border-radius: 8px;
         }
-        .icon-png { width: 32px; height: 32px; image-rendering: pixelated;
-        }
-        .icon-fallback { font-size: 20px; color: #888;
-        }
-        .icon-label { font-size: 10px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap;
-            text-overflow: ellipsis; text-shadow: 1px 1px 0 #000; }
-        .page-indicator { position: absolute;
-            bottom: 32px; right: 10px; font-size: 10px; color: #888; }
+        .icon-png { width: 32px; height: 32px; image-rendering: pixelated; }
+        .icon-fallback { font-size: 20px; color: #888; }
+        .icon-label { font-size: 10px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 0 #000; }
+        .page-indicator { position: absolute; bottom: 32px; right: 10px; font-size: 10px; color: #888; }
 
         /* --- 詳細画面 --- */
         .detail-view { 
@@ -179,172 +233,134 @@
             background-color: #111; padding: 10px; box-sizing: border-box; 
             z-index: 15;
             transition: opacity 0.1s; opacity: 0;
-            
-            overflow-y: auto;
-            overflow-x: hidden;
-            /* スクロールバーは消す */
+            overflow-y: auto; overflow-x: hidden;
             scrollbar-width: none;
         }
-        .detail-view::-webkit-scrollbar { display: none;
-        }
+        .detail-view::-webkit-scrollbar { display: none; }
 
-        .detail-title { color: var(--accent-color); border-bottom: 1px solid var(--accent-color); margin-bottom: 10px; font-size: 14px;
-        }
+        .detail-title { color: var(--accent-color); border-bottom: 1px solid var(--accent-color); margin-bottom: 10px; font-size: 14px; }
         
-        .detail-item {
-            margin-bottom: 15px;
-            display: block;
-            position: relative; 
-        }
+        .detail-item { margin-bottom: 15px; display: block; position: relative; }
 
         /* 画像コンテナ */
         .img-container {
-            position: relative;
-            width: 100%;
-            border: 1px solid #333;
-            overflow: hidden; 
+            position: relative; width: 100%; border: 1px solid #333; overflow: hidden; 
         }
         
-        .detail-img { width: 100%;
-            display: block; image-rendering: pixelated; }
+        .detail-img { width: 100%; display: block; image-rendering: pixelated; }
 
         /* 画像選択時のハイライト */
         .detail-item.focused .img-container {
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 5px var(--accent-color);
+            border: 2px solid var(--accent-color); box-shadow: 0 0 5px var(--accent-color);
         }
 
         /* 読み込み演出用の幕 (Curtain) */
         .img-curtain {
-            position: absolute;
-            bottom: 0; 
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000; 
-            border-top: 1px solid var(--accent-color);
-            z-index: 10;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; border-top: 1px solid var(--accent-color); z-index: 10;
         }
 
-        .detail-desc { font-size: 12px; line-height: 1.6; color: #ddd; margin-bottom: 15px;
-            padding: 0 4px; }
+        .detail-desc { font-size: 12px; line-height: 1.6; color: #ddd; margin-bottom: 15px; padding: 0 4px; }
         
         .note-link { 
-            color: #0ff;
-            text-decoration: none; border: 1px solid #0ff; padding: 4px 10px; font-size: 12px; 
+            color: #0ff; text-decoration: none; border: 1px solid #0ff; padding: 4px 10px; font-size: 12px; 
             background: rgba(0,255,255,0.1); border-radius: 2px; display: inline-block;
         }
         
         /* リンク選択時のハイライト */
         .detail-item.focused .note-link {
-            background: var(--accent-color);
-            color: #000;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 5px var(--accent-color);
-            font-weight: bold;
+            background: var(--accent-color); color: #000; border-color: var(--accent-color);
+            box-shadow: 0 0 5px var(--accent-color); font-weight: bold;
         }
 
         /* ヒンジ */
-        .hinge { height: 6px;
-            background: linear-gradient(to right, #111, #333, #111); margin: 0 10px; z-index: -1; border-left: 1px solid #000; border-right: 1px solid #000;
-        }
+        .hinge { height: 6px; background: linear-gradient(to right, #111, #333, #111); margin: 0 10px; z-index: -1; border-left: 1px solid #000; border-right: 1px solid #000; }
 
         /* --- 下キーパッド --- */
         .phone-bottom {
-            background: #111;
-            border-radius: 12px;
-            padding: 2px;
+            background: #111; border-radius: 12px; padding: 2px;
             box-shadow: 0 0 0 1px #333, inset 1px 1px 1px rgba(255,255,255,0.1);
         }
 
         .inner-panel-bottom {
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #000;
-            position: relative;
+            background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #000; position: relative;
         }
         .inner-panel-bottom::before {
-            content: "";
-            position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.12; mix-blend-mode: overlay;
+            content: ""; position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.12; mix-blend-mode: overlay;
             background: repeating-linear-gradient(0deg, transparent, transparent 1px, #fff 1px, #fff 2px);
         }
 
-        .controls { display: flex; flex-direction: column; background: #000; padding: 1px; gap: 1px;
-            position: relative; z-index: 1; }
+        .controls { display: flex; flex-direction: column; background: #000; padding: 1px; gap: 1px; position: relative; z-index: 1; }
 
-        .nav-keys { display: grid; grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 40px 45px 40px; gap: 1px; background: #000; }
+        .nav-keys { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 40px 45px 40px; gap: 1px; background: #000; }
 
-        .num-keys { display: grid;
-            grid-template-columns: repeat(3, 1fr); gap: 1px; background: #000; margin-top: 1px; }
+        .num-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #000; margin-top: 1px; }
 
         .key, .num-key {
             background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
             color: #ddd; display: flex; justify-content: center; align-items: center;
             font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; position: relative;
-            border-radius: 2px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); text-shadow: 0 -1px 0 #000;
+            border-radius: 2px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); text-shadow: 0 -1px 0 #000;
         }
         .key:active, .num-key:active, .key.pressed, .num-key.pressed {
-            background: #000;
-            color: #888; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            background: #000; color: #888; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .key-center {
             background: radial-gradient(circle at 50% 30%, #444, #111);
-            border: 1px solid #666; 
-            border-radius: 4px; z-index: 10;
+            border: 1px solid #666; border-radius: 4px; z-index: 10;
             box-shadow: 0 0 0 1px #000, inset 1px 1px 2px rgba(255,255,255,0.3), 0 2px 5px rgba(0,0,0,0.5);
             font-size: 11px; color: #fff; text-shadow: 0 1px 1px #000;
         }
         .key-center:active, .key-center.pressed {
-            background: #111;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transform: translateY(1px);
+            background: #111; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transform: translateY(1px);
         }
 
-        .key-page { font-size: 10px;
-            color: #aaa; border-bottom: 2px solid #005f99; }
-        .key-power { color: #e74c3c; font-size: 14px;
-            border-bottom: 2px solid #e74c3c; }
+        .key-page { font-size: 10px; color: #aaa; border-bottom: 2px solid #005f99; }
+        .key-power { color: #e74c3c; font-size: 14px; border-bottom: 2px solid #e74c3c; }
         
-        /* --- 数字キーのレイアウト変更 (Updated) --- */
+        /* 数字キーレイアウト */
         .num-key {
-            height: 35px;
-            position: relative;          /* 子要素(サブ文字)を絶対配置するために必要 */
-            display: flex;
-            align-items: center;
-            justify-content: center;     /* 数字をど真ん中に配置 */
-            font-family: Arial, sans-serif;
-            font-size: 16px;             /* 視認性を良くするため少し大きく */
-            color: #fff;
-            font-variant-numeric: tabular-nums; /* 数字の幅を揃える */
-            line-height: 1;
+            height: 35px; position: relative; display: flex; align-items: center; justify-content: center;
+            font-family: Arial, sans-serif; font-size: 16px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1;
         }
-
-        /* 数字本体(位置微調整用) */
-        .num-main {
-            display: block;
-            transform: translateY(-2px); /* ほんの少し上にずらすとバランスが良い */
-            font-weight: bold;           /* 数字をくっきりさせる */
-        }
-
-        /* 右下のアルファベット */
+        .num-main { display: block; transform: translateY(-2px); font-weight: bold; }
         .num-sub {
-            position: absolute;
-            right: 4px;
-            bottom: 3px;
-            font-size: 7px;
-            color: #666;
-            font-weight: normal;
-            pointer-events: none;        /* クリック判定を邪魔しないように */
-            letter-spacing: -0.5px;      /* 文字間を詰めてギュッとさせる */
+            position: absolute; right: 4px; bottom: 3px; font-size: 7px; color: #666; font-weight: normal; pointer-events: none; letter-spacing: -0.5px;
+        }
+        .logo-text {
+            text-align: center; font-size: 10px; color: #666; letter-spacing: 2px; margin-top: 5px; font-family: sans-serif;
         }
 
-        .logo-text {
-            text-align: center;
-            font-size: 10px; color: #666; letter-spacing: 2px; margin-top: 5px; font-family: sans-serif;
+        /* --- OS Overlays (New) --- */
+        .os-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #fff;
+            pointer-events: auto; /* ブロック用 */
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
+        .os-overlay.visible {
+            opacity: 1; pointer-events: auto;
+        }
+        
+        /* Idle Mode */
+        .idle-clock { font-size: 32px; letter-spacing: 2px; color: #ddd; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .idle-hint { margin-top: 10px; font-size: 10px; color: #888; animation: blinkText 1.5s infinite; }
+        @keyframes blinkText { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+        /* Sleep Mode */
+        #sleep-overlay { background-color: rgba(0,0,0,0.95); }
+        .sleep-clock { font-size: 14px; color: #555; position: absolute; bottom: 10px; right: 10px; }
+
+        /* Dev Mode */
+        #dev-overlay {
+            align-items: flex-start; padding: 20px; font-family: monospace; font-size: 10px; line-height: 1.5; color: #0f0;
+            background: #000;
+        }
+        .dev-line { width: 100%; border-bottom: 1px solid #003300; margin-bottom: 4px; padding-bottom: 2px; }
     </style>
 </head>
 <body>
@@ -356,9 +372,14 @@
                 <div class="screen">
                     <div class="status-bar">
                         <div class="status-left">
-                             <div class="battery-icon"><div class="battery-level"></div></div>
-                            <span style="font-size:10px;">📶</span>
-                            <span style="font-size:10px; color:#aaa; margin-left:2px;"></span>
+                            <div class="battery-icon"><div class="battery-level"></div></div>
+                            <div id="signal" class="signal" data-level="4" data-mode="normal" aria-label="signal">
+                                <span class="bar b1"></span>
+                                <span class="bar b2"></span>
+                                <span class="bar b3"></span>
+                                <span class="bar b4"></span>
+                                <span class="x">×</span>
+                            </div>
                         </div>
                         <div style="display:flex;">
                             <div class="status-right">
@@ -369,28 +390,41 @@
                         </div>
                     </div>
 
+                    <div id="idle-overlay" class="os-overlay">
+                        <div class="idle-clock" id="idle-clock-disp">12:00</div>
+                        <div class="idle-hint">Press any key</div>
+                    </div>
+                    <div id="sleep-overlay" class="os-overlay">
+                        <div class="sleep-clock" id="sleep-clock-disp">12:00</div>
+                    </div>
+                    <div id="dev-overlay" class="os-overlay">
+                        <div style="color:#0f0; margin-bottom:10px;">[ Developer Menu ]</div>
+                        <div class="dev-line">SukimaOS v0.22</div>
+                        <div class="dev-line">Build: Signal Update</div>
+                        <div class="dev-line" id="dev-apps-count">Apps: -</div>
+                        <div class="dev-line" id="dev-page-info">Page: -</div>
+                        <div class="dev-line" id="dev-uptime">Uptime: 00:00</div>
+                        <div style="margin-top:auto; width:100%; text-align:center; color:#555;">[Enter]: Exit</div>
+                    </div>
+
                     <div id="home-view">
                         <div class="app-grid" id="app-grid"></div>
-                        <div class="page-indicator" id="page-num">1/3</div>
+                        <div class="page-indicator" id="page-num">1/1</div>
                     </div>
 
                     <div id="detail-view" class="detail-view">
                         <div class="detail-content" id="detail-content"></div>
                     </div>
 
-                     <div class="soft-keys">
+                    <div class="soft-keys">
                         <div class="soft-key-btn" id="guide-left">◀︎ 前へ</div>
                         <div class="soft-key-btn" id="guide-center">決定</div>
                         <div class="soft-key-btn" id="guide-right">次へ ▶︎</div>
-                     </div>
+                    </div>
 
-                    <div id="boot-screen" style="position:absolute;
-                        top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:999; display:flex; flex-direction:column; justify-content:center;
-                        align-items:center;">
-                        <div style="font-size:24px;
-                            letter-spacing:4px; animation:blink 0.8s infinite alternate;">hamamah</div>
-                        <div style="font-size:10px;
-                            color:#888; margin-top:5px;">Connecting...</div>
+                    <div id="boot-screen" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <div style="font-size:24px; letter-spacing:4px; animation:blink 0.8s infinite alternate;">hamamah</div>
+                        <div style="font-size:10px; color:#888; margin-top:5px;">Connecting...</div>
                         <style>@keyframes blink { from{opacity:0.4;} to{opacity:1;} }</style>
                     </div>
 
@@ -398,7 +432,7 @@
             </div>
             <div class="logo-text">SukimaStock</div>
         </div>
-     </div>
+    </div>
 
     <div class="hinge"></div>
 
@@ -408,76 +442,31 @@
                 
                 <div class="nav-keys">
                     <div class="key key-page" id="btn-soft-left">◀︎ Page</div>
-                     <div class="key" id="btn-up">▲</div>
+                    <div class="key" id="btn-up">▲</div>
                     <div class="key key-page" id="btn-soft-right">Page ▶︎</div>
 
                     <div class="key" id="btn-left">◀︎</div>
                     <div class="key key-center" id="btn-enter">●</div>
                     <div class="key" id="btn-right">▶︎</div>
 
-                    <div class="key" style="background:#1a1a1a;
-                        cursor:default;"></div>
+                    <div class="key" style="background:#1a1a1a; cursor:default;"></div>
                     <div class="key" id="btn-down">▼</div>
                     <div class="key key-power" id="btn-power">⏻</div>
                 </div>
 
-                <div class="num-keys">
-                    <div class="num-key">
-                        <span class="num-main">1</span>
-                        <span class="num-sub"></span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">2</span>
-                        <span class="num-sub">ABC</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">3</span>
-                        <span class="num-sub">DEF</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">4</span>
-                        <span class="num-sub">GHI</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">5</span>
-                        <span class="num-sub">JKL</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">6</span>
-                        <span class="num-sub">MNO</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">7</span>
-                        <span class="num-sub">PQRS</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">8</span>
-                        <span class="num-sub">TUV</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">9</span>
-                        <span class="num-sub">WXYZ</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">*</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">0</span>
-                    </div>
-
-                    <div class="num-key">
-                        <span class="num-main">#</span>
-                    </div>
+                <div class="num-keys" id="num-keys-container">
+                    <div class="num-key" data-key="1"><span class="num-main">1</span><span class="num-sub"></span></div>
+                    <div class="num-key" data-key="2"><span class="num-main">2</span><span class="num-sub">ABC</span></div>
+                    <div class="num-key" data-key="3"><span class="num-main">3</span><span class="num-sub">DEF</span></div>
+                    <div class="num-key" data-key="4"><span class="num-main">4</span><span class="num-sub">GHI</span></div>
+                    <div class="num-key" data-key="5"><span class="num-main">5</span><span class="num-sub">JKL</span></div>
+                    <div class="num-key" data-key="6"><span class="num-main">6</span><span class="num-sub">MNO</span></div>
+                    <div class="num-key" data-key="7"><span class="num-main">7</span><span class="num-sub">PQRS</span></div>
+                    <div class="num-key" data-key="8"><span class="num-main">8</span><span class="num-sub">TUV</span></div>
+                    <div class="num-key" data-key="9"><span class="num-main">9</span><span class="num-sub">WXYZ</span></div>
+                    <div class="num-key" data-key="*"><span class="num-main">*</span></div>
+                    <div class="num-key" data-key="0"><span class="num-main">0</span></div>
+                    <div class="num-key" data-key="#"><span class="num-main">#</span></div>
                 </div>
 
             </div>
@@ -495,7 +484,7 @@
             title: "SteamClock",
             icon: "1.png", 
             image: "https://assets.st-note.com/production/uploads/images/249412945/picture_pc_e67856a041e77ef1d5670b50d1aa2e1f.png", 
-            desc: "一番最初に作成したスチームパンク風時計アプリです。",
+            desc: "一番最初に作成したスチームパンク風時計アプリです。",
             link: "https://note.com/hamamah/n/n55f12e684c13?sub_rt=share_b"
         },
         {
@@ -503,7 +492,7 @@
             title: "CoffeeFactory",
             icon: "2.png",
             image: "https://assets.st-note.com/production/uploads/images/249478392/picture_pc_400c563f39f55fa34f7c22ed9154d7e6.png",
-            desc: "ほっと一息つきたい時に開く、絵本のようなコーヒータイマーアプリです。",
+            desc: "ほっと一息つきたい時に開く、絵本のようなコーヒータイマーアプリです。",
             link: "https://note.com/hamamah/n/ndd00e6f70f55?sub_rt=share_b"
         },
         {
@@ -511,22 +500,24 @@
             title: "AmberTime",
             icon: "3.png",
             image: "https://assets.st-note.com/production/uploads/images/251298722/picture_pc_41f4941b5fb971116403bf7f36b4075d.png",
-            desc: "ドット絵で作成した、正解のないウイスキー蒸留所経営ゲームです。",
+            desc: "ドット絵で作成した、正解のないウイスキー蒸留所経営ゲームです。",
             link: "https://note.com/hamamah/n/n2123726a637c?sub_rt=share_b"
-        },
-        ...Array.from({ length: 18 }, (_, i) => ({
-            id: i + 4,
-            title: `アプリ${i + 4}`,
-            icon: '', 
-            desc: `【アプリ No.${i + 4}】\n\nこれはダミーのアプリデータです。\n\n画像を読み込む際、上から下にジワジワ表示される「ダイヤルアップ回線」を再現しています。\n\n▼キーを押してスクロールし、一番下まで行くとリンクが開けます。`,
-            image: `https://via.placeholder.com/240x160/222/555?text=App+${i+4}`, 
-            link: '#',
-            isDummy: true
-        }))
+        }
     ];
-    
+
     /* =========================================
-       SYSTEM
+       SYSTEM & STATE
+       ========================================= */
+    let systemState = 'active'; // active | idle | sleep | dev
+    let secretBuffer = "";
+    let idleTimer = null;
+    let powerHoldTimer = null;
+    const IDLE_TIMEOUT_MS = 15000;
+    const POWER_HOLD_MS = 2000;
+    const START_TIME = Date.now();
+
+    /* =========================================
+       APP STATE
        ========================================= */
     let currentPage = 0;
     let cursorIndex = 0;
@@ -534,7 +525,10 @@
     let scrollLock = false; 
 
     const ITEMS_PER_PAGE = 9;
-    const TOTAL_PAGES = Math.ceil(apps.length / ITEMS_PER_PAGE);
+    
+    function getTotalPages() {
+        return Math.max(1, Math.ceil(apps.length / ITEMS_PER_PAGE));
+    }
 
     const gridEl = document.getElementById('app-grid');
     const pageNumEl = document.getElementById('page-num');
@@ -544,7 +538,11 @@
     const guideLeft = document.getElementById('guide-left');
     const guideCenter = document.getElementById('guide-center');
     const guideRight = document.getElementById('guide-right');
-    
+
+    const idleOverlay = document.getElementById('idle-overlay');
+    const sleepOverlay = document.getElementById('sleep-overlay');
+    const devOverlay = document.getElementById('dev-overlay');
+
     window.onload = () => {
         setTimeout(() => {
             const boot = document.getElementById('boot-screen');
@@ -552,189 +550,116 @@
             boot.style.transition = 'opacity 0.8s';
             setTimeout(() => { boot.style.display = 'none'; }, 800);
         }, 1500);
+
         renderGrid();
         updateClock();
+        resetIdleTimer();
 
-        // ★追加: ホイール操作を無効化(キー操作限定にするため)
         detailView.addEventListener('wheel', (e) => {
             e.preventDefault();
         }, { passive: false });
+        
+        document.querySelectorAll('.num-key').forEach(el => {
+            el.addEventListener('click', () => {
+                const key = el.getAttribute('data-key');
+                handleInput(key);
+            });
+            attachHoldRepeat(el, el.getAttribute('data-key'));
+        });
     };
 
-    function renderGrid() {
-        gridEl.innerHTML = '';
-        const start = currentPage * ITEMS_PER_PAGE;
-        const end = start + ITEMS_PER_PAGE;
-        const pageApps = apps.slice(start, end);
-        pageApps.forEach((app, index) => {
-            const div = document.createElement('div');
-            div.className = `app-icon ${index === cursorIndex ? 'selected' : ''}`;
-            const iconHTML = app.icon
-                ? `<img class="icon-png" src="${app.icon}">`
-                : `<span class="icon-fallback">📱</span>`;
-
-             div.innerHTML = `<div class="icon-img">${iconHTML}</div><div class="icon-label">${app.title}</div>`;
-            div.onclick = () => {
-                cursorIndex = index;
-                renderGrid();
-                openDetail();
-            };
-            gridEl.appendChild(div);
-         });
-        pageNumEl.textContent = `${currentPage + 1}/${TOTAL_PAGES}`;
-        updateGuide();
+    /* --- Signal Icon Control --- */
+    function setSignal(level, mode='normal') {
+        const el = document.getElementById('signal');
+        if (!el) return;
+        el.dataset.level = String(Math.max(0, Math.min(4, level)));
+        el.dataset.mode = mode; // 'normal' | 'search' | 'noservice'
     }
 
-    function transitionScreen(callback) {
-        if (inDetailMode) detailView.style.opacity = '0';
-        else homeView.style.opacity = '0';
-
-        setTimeout(() => {
-            callback();
-            if (inDetailMode) detailView.style.opacity = '1';
-            else homeView.style.opacity = '1';
-        }, 100);
-    }
-
-    // 読み込み演出
-    function playLoadingAnimation() {
-        const curtain = document.getElementById('loading-curtain');
-        if (!curtain) return;
-
-        curtain.style.transition = 'none';
-        curtain.style.height = '100%';
-
-        let height = 100;
-        const interval = setInterval(() => {
-            if (Math.random() < 0.15) return;
-            if (Math.random() < 0.05) {
-                height += Math.random() * 4;
-            } else {
-                height -= Math.random() * 3;
-            }
-            if (height <= 0) {
-                height = 0;
-                clearInterval(interval);
-            }
-            if (height > 100) height = 100;
-            curtain.style.height = height + '%';
-        }, 60);
-    }
-
-    // ★スクロール最下部判定
-    function isAtBottom(el, thresholdPx = 6) {
-        // コンテンツが少なくてスクロール不要な場合もTrue扱い
-        if (el.scrollHeight <= el.clientHeight) return true;
-        return (el.scrollTop + el.clientHeight) >= (el.scrollHeight - thresholdPx);
-    }
-
-    // ★最下部に来たらリンクをフォーカスする
-    function updateDetailFocusByScroll() {
-        const container = document.getElementById('detail-view');
-        // HTML側でID="detail-item-link"を付与した要素を取得
-        const linkItem = document.getElementById('detail-item-link'); 
-        if (!container || !linkItem) return;
-        const focused = isAtBottom(container, 6);
-
-        // toggleでクラス着脱
-        linkItem.classList.toggle('focused', focused);
-        // ガイド表示
-        guideCenter.textContent = focused ? "開く" : "—";
-    }
-
-    function stepScroll(direction) {
-        const container = document.getElementById('detail-view');
-        if (!container) return;
-        
-        if (scrollLock) return;
-        scrollLock = true;
-
-        const step = 12;
-        // overflow-y:auto にしたので scrollTop が機能します
-        container.scrollTop += direction * step;
-        setTimeout(() => {
-            scrollLock = false;
-        }, 80);
-    }
-
-    function openDetail() {
-        transitionScreen(() => {
-            const appIndex = currentPage * ITEMS_PER_PAGE + cursorIndex;
-            if (appIndex >= apps.length) return;
-            inDetailMode = true;
-
-            const app = apps[appIndex];
-            const imgUrl = app.image || 'https://via.placeholder.com/240x160/222/555?text=NOW+LOADING...';
-            
-            detailContent.innerHTML = `
-                <div class="detail-title">${app.title}</div>
-                
-                <div class="detail-item">
-                    <div class="img-container">
-                        <img src="${imgUrl}" class="detail-img">
-                        <div id="loading-curtain" class="img-curtain"></div>
-                    </div>
-                </div>
-                
-                <div class="detail-desc">${app.desc.replace(/\n/g, '<br>')}</div>
-                
-                <div id="detail-item-link" class="detail-item">
-                    <a href="${app.link}" target="_blank" class="note-link" id="target-link">Note記事を読む</a>
-                </div>
-
-                 <div style="height:20px;"></div>
-            `;
-            homeView.style.display = 'none';
-            detailView.style.display = 'block';
-            updateGuide();
-            
-            // ★detail表示直後に一回更新 + スクロール監視
+    /* --- OS State Management --- */
+    function setSystemState(newState) {
+        // 状態遷移時のエフェクト
+        if (newState === 'sleep') {
+            // Sleepに入るとき: 検索中→圏外へ
+            setSignal(0, 'search');
             setTimeout(() => {
-                updateDetailFocusByScroll();
-                // 読み込み演出開始
-                playLoadingAnimation();
-            }, 50);
-            // ★スクロールイベントでフォーカス判定
-            detailView.onscroll = () => updateDetailFocusByScroll();
-        });
-    }
+                if(systemState === 'sleep') setSignal(0, 'noservice');
+            }, 800);
+        } else if (newState === 'active' && systemState === 'sleep') {
+            // Sleepから復帰するとき: 検索中→通常へ
+            setSignal(0, 'search');
+            setTimeout(() => {
+                if(systemState === 'active') setSignal(4, 'normal');
+            }, 1000);
+        }
 
-    function closeDetail() {
-        transitionScreen(() => {
-            inDetailMode = false;
-            homeView.style.display = 'block';
-            detailView.style.display = 'none';
-            updateGuide();
-            // イベントリスナ解除(null代入)
-            detailView.onscroll = null;
-         });
-    }
+        systemState = newState;
+        
+        idleOverlay.classList.toggle('visible', newState === 'idle');
+        sleepOverlay.classList.toggle('visible', newState === 'sleep');
+        devOverlay.classList.toggle('visible', newState === 'dev');
 
-    function updateGuide() {
-        if (inDetailMode) {
-            guideLeft.textContent = "戻る";
-            guideRight.textContent = "";
-            guideCenter.textContent = "—"; // 初期状態
+        if (newState === 'active') {
+            resetIdleTimer();
+            secretBuffer = "";
         } else {
-            guideLeft.textContent = "◀︎ 前へ";
-            guideCenter.textContent = "決定";
-            guideRight.textContent = "次へ ▶︎";
+            clearTimeout(idleTimer);
+            idleTimer = null;
+        }
+
+        if (newState === 'dev') {
+            document.getElementById('dev-apps-count').textContent = `Apps: ${apps.length}`;
+            document.getElementById('dev-page-info').textContent = `Page: ${currentPage+1}/${getTotalPages()}`;
         }
     }
 
-    function openLink() {
-        const link = document.getElementById('target-link');
-        if(link && link.getAttribute('href') !== '#') {
-            window.open(link.href, '_blank');
+    function resetIdleTimer() {
+        if (systemState !== 'active') return;
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            setSystemState('idle');
+        }, IDLE_TIMEOUT_MS);
+    }
+
+    function checkSecretCode(key) {
+        if (!/^[0-9*#]$/.test(key)) return;
+        secretBuffer += key;
+        if (secretBuffer.length > 16) secretBuffer = secretBuffer.slice(-16);
+        if (secretBuffer.endsWith('*#0000#')) {
+            if (!inDetailMode) setSystemState('dev');
+            secretBuffer = "";
         }
     }
 
+    /* --- Input Handling --- */
     function handleInput(key) {
-        const btn = document.getElementById(`btn-${key}`);
+        // UI Feedback
+        let btnId = `btn-${key}`;
+        const btn = document.getElementById(btnId);
         if(btn) {
             btn.classList.add('pressed');
             setTimeout(() => btn.classList.remove('pressed'), 100);
+        } else if (/^[0-9*#]$/.test(key)) {
+             const numKey = document.querySelector(`.num-key[data-key="${key}"]`);
+             if(numKey) {
+                 numKey.classList.add('pressed');
+                 setTimeout(() => numKey.classList.remove('pressed'), 100);
+             }
         }
+
+        if (systemState === 'sleep' || systemState === 'idle') {
+            setSystemState('active');
+            return;
+        }
+
+        if (systemState === 'dev') {
+            if (key === 'enter' || key === 'back' || key === 'power' || key === 'guide-center') {
+                setSystemState('active');
+            }
+            return;
+        }
+
+        resetIdleTimer();
 
         if (key === 'power') {
             transitionScreen(() => {
@@ -747,22 +672,17 @@
             });
             return;
         }
+        
+        checkSecretCode(key);
 
-        /* ★変更: 詳細画面の操作ロジックをリクエスト通りに刷新 */
         if (inDetailMode) {
-            
             if (key === 'back' || key === 'soft-left') {
                 closeDetail();
                 return;
             }
+            if (key === 'down') { stepScroll(1); return; }
+            if (key === 'up')   { stepScroll(-1); return; }
 
-            // ▲/▼:カクカクスクロール
-            if (key === 'down') { stepScroll(1);
-                return; }
-            if (key === 'up')   { stepScroll(-1);
-                return; }
-
-            // 決定:最下部(リンクフォーカス状態)なら開く
             if (key === 'enter' || key === 'guide-center') {
                 const container = document.getElementById('detail-view');
                 if (container && isAtBottom(container, 6)) {
@@ -772,30 +692,23 @@
             }
 
         } else {
-            // ホーム画面(Grid)の操作
-            const currentItemsCount = Math.min(ITEMS_PER_PAGE, apps.length - currentPage * ITEMS_PER_PAGE);
+            const totalPages = getTotalPages();
+            const currentItemsCount = apps.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE).length;
+
             if (key === 'soft-left' || key === '1') {
-                if (currentPage > 0) {
-                    transitionScreen(() => {
-                        currentPage--;
-                        cursorIndex = ITEMS_PER_PAGE - 1;
-                        renderGrid();
-                    });
-                }
+                currentPage = (currentPage - 1 + totalPages) % totalPages;
+                cursorIndex = 0;
+                renderGrid();
             } else if (key === 'soft-right' || key === '3') {
-                if (currentPage < TOTAL_PAGES - 1) {
-                    transitionScreen(() => {
-                        currentPage++;
-                        cursorIndex = 0;
-                        renderGrid();
-                    });
-                }
+                currentPage = (currentPage + 1) % totalPages;
+                cursorIndex = 0;
+                renderGrid();
             } else if (key === 'right') {
                 if (cursorIndex < currentItemsCount - 1) {
                     cursorIndex++;
                     renderGrid();
                 } else {
-                    if (currentPage < TOTAL_PAGES - 1) {
+                    if (currentPage < totalPages - 1) {
                         transitionScreen(() => {
                             currentPage++;
                             cursorIndex = 0;
@@ -832,34 +745,278 @@
         }
     }
 
+    /* --- Rendering & Animation --- */
+    function renderGrid() {
+        gridEl.innerHTML = '';
+        const totalPages = getTotalPages();
+        if (currentPage > totalPages - 1) currentPage = totalPages - 1;
+
+        const start = currentPage * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        const pageApps = apps.slice(start, end);
+
+        pageApps.forEach((app, index) => {
+            const div = document.createElement('div');
+            div.className = `app-icon ${index === cursorIndex ? 'selected' : ''}`;
+
+            const iconHTML = app.icon
+                ? `<img class="icon-png" src="${app.icon}">`
+                : `<span class="icon-fallback">📱</span>`;
+
+            div.innerHTML = `
+                <div class="icon-img">${iconHTML}</div>
+                <div class="icon-label">${app.title}</div>
+            `;
+
+            div.onclick = () => {
+                cursorIndex = index;
+                renderGrid();
+                openDetail();
+            };
+            gridEl.appendChild(div);
+        });
+
+        pageNumEl.textContent = `${currentPage + 1}/${totalPages}`;
+        updateGuide();
+    }
+
+    function transitionScreen(callback) {
+        if (inDetailMode) detailView.style.opacity = '0';
+        else homeView.style.opacity = '0';
+
+        setTimeout(() => {
+            callback();
+            if (inDetailMode) detailView.style.opacity = '1';
+            else homeView.style.opacity = '1';
+        }, 100);
+    }
+
+    function playLoadingAnimation() {
+        const curtain = document.getElementById('loading-curtain');
+        if (!curtain) return;
+        curtain.style.transition = 'none';
+        curtain.style.height = '100%';
+        let height = 100;
+        const interval = setInterval(() => {
+            if (Math.random() < 0.15) return;
+            if (Math.random() < 0.05) height += Math.random() * 4;
+            else height -= Math.random() * 3;
+            if (height <= 0) {
+                height = 0;
+                clearInterval(interval);
+            }
+            if (height > 100) height = 100;
+            curtain.style.height = height + '%';
+        }, 60);
+    }
+
+    function isAtBottom(el, thresholdPx = 6) {
+        if (el.scrollHeight <= el.clientHeight) return true;
+        return (el.scrollTop + el.clientHeight) >= (el.scrollHeight - thresholdPx);
+    }
+
+    function updateDetailFocusByScroll() {
+        const container = document.getElementById('detail-view');
+        const linkItem = document.getElementById('detail-item-link'); 
+        if (!container || !linkItem) return;
+        const focused = isAtBottom(container, 6);
+        linkItem.classList.toggle('focused', focused);
+        guideCenter.textContent = focused ? "開く" : "—";
+    }
+
+    function stepScroll(direction) {
+        const container = document.getElementById('detail-view');
+        if (!container) return;
+        if (scrollLock) return;
+        scrollLock = true;
+        container.scrollTop += direction * 12;
+        setTimeout(() => { scrollLock = false; }, 80);
+    }
+
+    function openDetail() {
+        transitionScreen(() => {
+            const appIndex = currentPage * ITEMS_PER_PAGE + cursorIndex;
+            if (appIndex >= apps.length) return;
+            inDetailMode = true;
+
+            const app = apps[appIndex];
+            const imgUrl = app.image || 'https://via.placeholder.com/240x160/222/555?text=NOW+LOADING...';
+             
+            detailContent.innerHTML = `
+                <div class="detail-title">${app.title}</div>
+                <div class="detail-item">
+                    <div class="img-container">
+                        <img src="${imgUrl}" class="detail-img">
+                        <div id="loading-curtain" class="img-curtain"></div>
+                    </div>
+                </div>
+                <div class="detail-desc">${app.desc.replace(/\n/g, '<br>')}</div>
+                <div id="detail-item-link" class="detail-item">
+                    <a href="${app.link}" target="_blank" class="note-link" id="target-link">Note記事を読む</a>
+                </div>
+                <div style="height:20px;"></div>
+            `;
+            homeView.style.display = 'none';
+            detailView.style.display = 'block';
+            updateGuide();
+            
+            setTimeout(() => {
+                updateDetailFocusByScroll();
+                playLoadingAnimation();
+            }, 50);
+            detailView.onscroll = () => updateDetailFocusByScroll();
+        });
+    }
+
+    function closeDetail() {
+        transitionScreen(() => {
+            inDetailMode = false;
+            homeView.style.display = 'block';
+            detailView.style.display = 'none';
+            updateGuide();
+            detailView.onscroll = null;
+        });
+    }
+
+    function updateGuide() {
+        if (inDetailMode) {
+            guideLeft.textContent = "戻る";
+            guideRight.textContent = "";
+            guideCenter.textContent = "—"; 
+        } else {
+            guideLeft.textContent = "◀︎ 前へ";
+            guideCenter.textContent = "決定";
+            guideRight.textContent = "次へ ▶︎";
+        }
+    }
+
+    function openLink() {
+        const link = document.getElementById('target-link');
+        if(link && link.getAttribute('href') !== '#') {
+            window.open(link.href, '_blank');
+        }
+    }
+
+    const HOLD_DELAY = 250;
+    const HOLD_INTERVAL = 70;
+
+    function attachHoldRepeat(el, key) {
+        if (!el) return;
+        if (key === 'power') {
+            attachPowerHoldSleep(el);
+            return;
+        }
+
+        let holdTimeout = null;
+        let holdInterval = null;
+        let holding = false;
+
+        const clearHold = () => {
+            holding = false;
+            if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+            if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+            el.classList.remove('pressed');
+        };
+
+        const startHold = (e) => {
+            e.preventDefault(); 
+            if (holding) return;
+            holding = true;
+            handleInput(key); 
+            el.classList.add('pressed');
+            holdTimeout = setTimeout(() => {
+                holdInterval = setInterval(() => handleInput(key), HOLD_INTERVAL);
+            }, HOLD_DELAY);
+        };
+
+        el.addEventListener('pointerdown', startHold, { passive: false });
+        el.addEventListener('pointerup', clearHold);
+        el.addEventListener('pointerleave', clearHold);
+        el.addEventListener('pointercancel', clearHold);
+    }
+
+    function attachPowerHoldSleep(el) {
+        if (!el) return;
+        let pressTimer = null;
+        
+        const start = (e) => {
+            e.preventDefault();
+            el.classList.add('pressed');
+            pressTimer = setTimeout(() => {
+                pressTimer = null;
+                el.classList.remove('pressed');
+                setSystemState('sleep');
+            }, POWER_HOLD_MS);
+        };
+
+        const end = (e) => {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+                el.classList.remove('pressed');
+                handleInput('power');
+            }
+        };
+
+        el.addEventListener('pointerdown', start, { passive: false });
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointerleave', () => {
+             if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; el.classList.remove('pressed'); }
+        });
+    }
+
     const keys = ['up','down','left','right','enter','back','soft-left','soft-right','power'];
     keys.forEach(k => {
         const el = document.getElementById(`btn-${k}`);
-        if(el) el.onclick = () => handleInput(k);
+        if (!el) return;
+        attachHoldRepeat(el, k);
     });
+
     document.addEventListener('keydown', (e) => {
         switch(e.key) {
-            case 'ArrowUp': e.preventDefault(); handleInput('up'); break;
-            case 'ArrowDown': e.preventDefault(); handleInput('down'); break;
-            case 'ArrowLeft': handleInput('left'); break;
-            case 'ArrowRight': handleInput('right'); break;
-            case 'Enter': handleInput('enter'); break;
-            case 'Backspace': handleInput('back'); break;
-            case 'Escape': handleInput('power'); break;
-            case '1': handleInput('soft-left'); break; 
-            case '3': handleInput('soft-right'); break; 
+            case 'ArrowUp': e.preventDefault(); handleInput('up'); return;
+            case 'ArrowDown': e.preventDefault(); handleInput('down'); return;
+            case 'ArrowLeft': handleInput('left'); return;
+            case 'ArrowRight': handleInput('right'); return;
+            case 'Enter': handleInput('enter'); return;
+            case 'Backspace': handleInput('back'); return;
+            case 'Escape': handleInput('power'); return;
+            case '1': handleInput('soft-left'); return; 
+            case '3': handleInput('soft-right'); return; 
+        }
+
+        if (/^[0-9*#]$/.test(e.key)) {
+            handleInput(e.key);
+            return;
+        }
+
+        if (systemState !== 'active') {
+            setSystemState('active');
         }
     });
+
     function updateClock() {
         const now = new Date();
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const month = now.getMonth() + 1;
         const date = now.getDate();
         const day = days[now.getDay()];
-        document.getElementById('date-display').textContent = `${month}/${date} ${day}`;
         const h = String(now.getHours()); 
         const m = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('clock').textContent = `${h}:${m}`;
+        const timeStr = `${h}:${m}`;
+
+        document.getElementById('date-display').textContent = `${month}/${date} ${day}`;
+        document.getElementById('clock').textContent = timeStr;
+        
+        document.getElementById('idle-clock-disp').textContent = timeStr;
+        document.getElementById('sleep-clock-disp').textContent = timeStr;
+
+        if (systemState === 'dev') {
+            const diff = Math.floor((Date.now() - START_TIME) / 1000);
+            const mm = String(Math.floor(diff / 60)).padStart(2, '0');
+            const ss = String(diff % 60).padStart(2, '0');
+            document.getElementById('dev-uptime').textContent = `Uptime: ${mm}:${ss}`;
+        }
     }
     setInterval(updateClock, 1000);
 
