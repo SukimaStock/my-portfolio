@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio OS</title>
+    <title>My Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
     <style>
         /* --- 共通変数 --- */
@@ -124,22 +124,36 @@
         }
         .signal .bar { width: 2px;
             background: rgba(255,255,255,0.9); opacity: 0.2; border-radius: 1px 1px 0 0; }
-        .signal .b1{ height: 2px; } .signal .b2{ height: 4px; } .signal .b3{ height: 6px; } .signal .b4{ height: 8px; }
-        .signal[data-level="0"] .bar{ opacity: 0.15; }
-        .signal[data-level="1"] .b1{ opacity: 1; }
-        .signal[data-level="2"] .b1,.signal[data-level="2"] .b2{ opacity: 1; }
-        .signal[data-level="3"] .b1,.signal[data-level="2"] .b2,.signal[data-level="3"] .b3{ opacity: 1; }
-        .signal[data-level="4"] .bar{ opacity: 1; }
+        .signal .b1{ height: 2px;
+        } .signal .b2{ height: 4px; } .signal .b3{ height: 6px; } .signal .b4{ height: 8px;
+        }
+        .signal[data-level="0"] .bar{ opacity: 0.15;
+        }
+        .signal[data-level="1"] .b1{ opacity: 1;
+        }
+        .signal[data-level="2"] .b1,.signal[data-level="2"] .b2{ opacity: 1;
+        }
+        .signal[data-level="3"] .b1,.signal[data-level="2"] .b2,.signal[data-level="3"] .b3{ opacity: 1;
+        }
+        .signal[data-level="4"] .bar{ opacity: 1;
+        }
         .signal .x { position: absolute; right: -6px; bottom: -3px; font-size: 10px;
             line-height: 1; font-family: sans-serif; font-weight: bold; color: #f55; opacity: 0; text-shadow: 1px 1px 0 #000;
         }
-        .signal[data-mode="noservice"] .bar{ opacity: 0.1; } .signal[data-mode="noservice"] .x{ opacity: 1; }
-        @keyframes sigScan { 0%{ opacity: 0.2; } 50%{ opacity: 1; } 100%{ opacity: 0.2; } }
-        .signal[data-mode="search"] .bar{ opacity: 0.2; }
-        .signal[data-mode="search"] .b1{ animation: sigScan 0.8s infinite; }
-        .signal[data-mode="search"] .b2{ animation: sigScan 0.8s 0.15s infinite; }
-        .signal[data-mode="search"] .b3{ animation: sigScan 0.8s 0.30s infinite; }
-        .signal[data-mode="search"] .b4{ animation: sigScan 0.8s 0.45s infinite; }
+        .signal[data-mode="noservice"] .bar{ opacity: 0.1; } .signal[data-mode="noservice"] .x{ opacity: 1;
+        }
+        @keyframes sigScan { 0%{ opacity: 0.2; } 50%{ opacity: 1;
+        } 100%{ opacity: 0.2; } }
+        .signal[data-mode="search"] .bar{ opacity: 0.2;
+        }
+        .signal[data-mode="search"] .b1{ animation: sigScan 0.8s infinite;
+        }
+        .signal[data-mode="search"] .b2{ animation: sigScan 0.8s 0.15s infinite;
+        }
+        .signal[data-mode="search"] .b3{ animation: sigScan 0.8s 0.30s infinite;
+        }
+        .signal[data-mode="search"] .b4{ animation: sigScan 0.8s 0.45s infinite;
+        }
 
         .status-right { display: flex; flex-direction: column; align-items: flex-end; line-height: 1;
         }
@@ -164,8 +178,10 @@
             background: linear-gradient(to bottom, #222, #000);
             text-shadow: 0 1px 0 #000;
         }
-        .soft-key-btn:last-child { border-right: none; }
-        .soft-key-btn:nth-child(2) { font-weight: bold; }
+        .soft-key-btn:last-child { border-right: none;
+        }
+        .soft-key-btn:nth-child(2) { font-weight: bold;
+        }
 
         /* コンテンツエリア */
         #home-view { 
@@ -188,7 +204,8 @@
             cursor: pointer; padding: 2px; 
             border-radius: 6px;
             border: 2px solid transparent; 
-            position: relative; /* バッジ用 */
+            position: relative;
+            /* バッジ用 */
         }
         
         .app-icon.selected {
@@ -221,9 +238,9 @@
 
         @keyframes selectBlink { 
             from { border-color: rgba(136, 255, 170, 0.4);
-            box-shadow: inset 0 0 5px rgba(136, 255, 170, 0.2); } 
+                box-shadow: inset 0 0 5px rgba(136, 255, 170, 0.2); } 
             to { border-color: var(--accent-color);
-            box-shadow: inset 0 0 12px rgba(136, 255, 170, 0.5); } 
+                box-shadow: inset 0 0 12px rgba(136, 255, 170, 0.5); } 
         }
 
         .icon-img { 
@@ -233,7 +250,7 @@
             display: flex;
             align-items: center; justify-content: center; 
             background: rgba(255,255,255,0.03); 
-            border-radius: 14px; 
+            border-radius: 14px;
         }
         
         .icon-png { 
@@ -242,12 +259,15 @@
             object-fit: contain; image-rendering: pixelated;
         }
 
-        .icon-fallback { font-size: 32px; color: #888; } 
+        .icon-fallback { font-size: 32px; color: #888;
+        } 
 
         .icon-label { font-size: 10px; text-align: center; width: 100%;
-            overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 0 #000;
+            overflow: hidden;
+            white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 0 #000;
         }
-        .page-indicator { position: absolute; bottom: 32px; right: 10px; font-size: 10px; color: #888;
+        .page-indicator { position: absolute;
+            bottom: 32px; right: 10px; font-size: 10px; color: #888;
         }
 
         /* --- 詳細画面 --- */
@@ -260,18 +280,22 @@
             overflow-y: auto; overflow-x: hidden;
             scrollbar-width: none;
         }
-        .detail-view::-webkit-scrollbar { display: none; }
+        .detail-view::-webkit-scrollbar { display: none;
+        }
 
-        .detail-title { color: var(--accent-color); border-bottom: 1px solid var(--accent-color); margin-bottom: 10px; font-size: 14px; }
+        .detail-title { color: var(--accent-color); border-bottom: 1px solid var(--accent-color); margin-bottom: 10px; font-size: 14px;
+        }
         
-        .detail-item { margin-bottom: 15px; display: block; position: relative; }
+        .detail-item { margin-bottom: 15px;
+            display: block; position: relative; }
 
         .img-container {
             position: relative;
             width: 100%; border: 1px solid #333; overflow: hidden; 
         }
         
-        .detail-img { width: 100%; display: block; image-rendering: pixelated; }
+        .detail-img { width: 100%;
+            display: block; image-rendering: pixelated; }
 
         .detail-item.focused .img-container {
             border: 2px solid var(--accent-color);
@@ -284,7 +308,8 @@
             background-color: #000; border-top: 1px solid var(--accent-color); z-index: 10;
         }
 
-        .detail-desc { font-size: 12px; line-height: 1.6; color: #ddd; margin-bottom: 15px; padding: 0 4px; }
+        .detail-desc { font-size: 12px; line-height: 1.6; color: #ddd; margin-bottom: 15px;
+            padding: 0 4px; }
         
         .note-link { 
             color: #0ff;
@@ -362,7 +387,8 @@
             position: relative; display: flex; align-items: center; justify-content: center;
             font-family: Arial, sans-serif; font-size: 16px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1;
         }
-        .num-main { display: block; transform: translateY(-2px); font-weight: bold; }
+        .num-main { display: block; transform: translateY(-2px); font-weight: bold;
+        }
         .num-sub {
             position: absolute;
             right: 4px; bottom: 3px; font-size: 7px; color: #666; font-weight: normal; pointer-events: none; letter-spacing: -0.5px;
@@ -376,7 +402,8 @@
         .os-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; /* デフォルト */
+            background-color: #000;
+            /* デフォルト */
             background-size: cover;
             background-position: center;
             z-index: 100;
@@ -390,7 +417,8 @@
         .os-overlay::before {
             content: "";
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); /* 暗さ調整 */
+            background: rgba(0,0,0,0.4);
+            /* 暗さ調整 */
             z-index: -1;
         }
 
@@ -405,17 +433,20 @@
             padding-top: 60px;
         }
         .idle-clock { 
-            font-size: 18px; /* 控えめなサイズ */
-            letter-spacing: 1px; color: #fff; 
+            font-size: 18px;
+            /* 控えめなサイズ */
+            letter-spacing: 1px; color: #fff;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
             font-weight: bold;
         }
         .idle-date {
-            font-size: 10px; color: #ddd; margin-top: 4px;
+            font-size: 10px;
+            color: #ddd; margin-top: 4px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
         .idle-hint { 
-            margin-top: auto; margin-bottom: 40px;
+            margin-top: auto;
+            margin-bottom: 40px;
             font-size: 10px; color: rgba(255,255,255,0.7); 
             animation: blinkText 2s infinite; 
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
@@ -424,10 +455,12 @@
 
         /* Sleep Mode */
         #sleep-overlay { 
-            background-color: #000 !important; /* スリープは真っ黒 */
+            background-color: #000 !important;
+            /* スリープは真っ黒 */
             background-image: none !important;
         }
-        .sleep-clock { font-size: 12px; color: #333; position: absolute; bottom: 10px; right: 10px; }
+        .sleep-clock { font-size: 12px; color: #333; position: absolute; bottom: 10px; right: 10px;
+        }
 
         /* Dev Mode (Updated UI) */
         #dev-overlay {
@@ -436,7 +469,8 @@
             background: #000;
         }
         .dev-line { 
-            width: 100%; border-bottom: 1px solid #003300; margin-bottom: 4px; padding-bottom: 2px;
+            width: 100%;
+            border-bottom: 1px solid #003300; margin-bottom: 4px; padding-bottom: 2px;
             display: flex; justify-content: space-between;
         }
         .dev-item {
@@ -446,6 +480,36 @@
         .dev-item.selected {
             background: #0f0;
             color: #000;
+        }
+
+        /* --- 追加機能用スタイル --- */
+        /* 通話キー */
+        .key-call {
+            color: #4f4; /* 緑色 */
+            font-size: 18px;
+        }
+
+        /* 接続中オーバーレイ */
+        #connect-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 900;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .connect-text {
+            font-size: 14px;
+            letter-spacing: 2px;
+            animation: blink 0.5s infinite alternate;
+            margin-bottom: 10px;
+        }
+        .connect-sub {
+            font-size: 10px;
+            color: #888;
         }
     </style>
 </head>
@@ -458,24 +522,30 @@
                 <div class="screen">
                     <div class="status-bar">
                         <div class="status-left">
+   
                             <div class="battery-icon"><div class="battery-level"></div></div>
                             <div id="signal" class="signal" data-level="4" data-mode="normal">
                                 <span class="bar b1"></span><span class="bar b2"></span><span class="bar b3"></span><span class="bar b4"></span>
+ 
                                 <span class="x">×</span>
                             </div>
                         </div>
+                
                         <div style="display:flex;">
                             <div class="status-right">
                                 <div class="date-text" id="date-display">1/1 Mon</div>
+                           
                                 <div class="time-text" id="clock">12:00</div>
                             </div>
                             <div class="status-mode-icon"></div>
                         </div>
+            
                     </div>
 
                     <div id="idle-overlay" class="os-overlay">
                         <div class="idle-clock" id="idle-clock-disp">12:00</div>
                         <div class="idle-date" id="idle-date-disp">Jan 1</div>
+                 
                         <div class="idle-hint">Unlock</div>
                     </div>
 
@@ -483,37 +553,42 @@
                         <div class="sleep-clock" id="sleep-clock-disp">12:00</div>
                     </div>
 
+    
                     <div id="dev-overlay" class="os-overlay" style="z-index:200;">
                         <div style="color:#0f0; margin-bottom:10px; width:100%; border-bottom:1px solid #0f0;">[ Developer Menu ]</div>
                         <div id="dev-menu-container" style="width:100%;">
-                            </div>
+                        </div>
                         <div style="margin-top:auto; width:100%; text-align:center; color:#555; font-size:9px;">
                             build: wallpaper_mod
                         </div>
                     </div>
 
+                    <div id="connect-overlay">
+                        <div class="connect-text">Connecting...</div>
+                        <div class="connect-sub">外部ネットワークへ接続中</div>
+                    </div>
+
                     <div id="home-view">
+   
                         <div class="app-grid" id="app-grid"></div>
                         <div class="page-indicator" id="page-num">1/1</div>
                     </div>
 
                     <div id="detail-view" class="detail-view">
+         
                         <div class="detail-content" id="detail-content"></div>
                     </div>
 
                     <div class="soft-keys">
                         <div class="soft-key-btn" id="guide-left">◀︎ 前へ</div>
+               
                         <div class="soft-key-btn" id="guide-center">決定</div>
                         <div class="soft-key-btn" id="guide-right">次へ ▶︎</div>
                     </div>
 
-                    <div id="boot-screen" style="position:absolute;
-                    top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:999; display:flex; flex-direction:column; justify-content:center;
-                    align-items:center;">
-                        <div style="font-size:24px;
-                        letter-spacing:4px; animation:blink 0.8s infinite alternate;">hamamah</div>
-                        <div style="font-size:10px;
-                        color:#888; margin-top:5px;">Connecting...</div>
+                    <div id="boot-screen" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <div style="font-size:24px; letter-spacing:4px; animation:blink 0.8s infinite alternate;">hamamah</div>
+                        <div style="font-size:10px; color:#888; margin-top:5px;">Connecting...</div>
                         <style>@keyframes blink { from{opacity:0.4;} to{opacity:1;} }</style>
                     </div>
 
@@ -521,6 +596,7 @@
             </div>
             <div class="logo-text">SukimaStock</div>
         </div>
+ 
     </div>
 
     <div class="hinge"></div>
@@ -531,14 +607,17 @@
                 
                 <div class="nav-keys">
                     <div class="key key-page" id="btn-soft-left">◀︎ Page</div>
+        
                     <div class="key" id="btn-up">▲</div>
                     <div class="key key-page" id="btn-soft-right">Page ▶︎</div>
 
                     <div class="key" id="btn-left">◀︎</div>
                     <div class="key key-center" id="btn-enter">●</div>
+                 
                     <div class="key" id="btn-right">▶︎</div>
 
-                    <div class="key" style="background:#1a1a1a; cursor:default;"></div>
+                    <div class="key key-call" id="btn-call">✆</div>
+
                     <div class="key" id="btn-down">▼</div>
                     <div class="key key-power" id="btn-power">⏻</div>
                 </div>
@@ -549,16 +628,19 @@
                     <div class="num-key" data-key="3"><span class="num-main">3</span><span class="num-sub">DEF</span></div>
                     <div class="num-key" data-key="4"><span class="num-main">4</span><span class="num-sub">GHI</span></div>
                     <div class="num-key" data-key="5"><span class="num-main">5</span><span class="num-sub">JKL</span></div>
+ 
                     <div class="num-key" data-key="6"><span class="num-main">6</span><span class="num-sub">MNO</span></div>
                     <div class="num-key" data-key="7"><span class="num-main">7</span><span class="num-sub">PQRS</span></div>
                     <div class="num-key" data-key="8"><span class="num-main">8</span><span class="num-sub">TUV</span></div>
                     <div class="num-key" data-key="9"><span class="num-main">9</span><span class="num-sub">WXYZ</span></div>
+     
                     <div class="num-key" data-key="*"><span class="num-main">*</span></div>
                     <div class="num-key" data-key="0"><span class="num-main">0</span></div>
                     <div class="num-key" data-key="#"><span class="num-main">#</span></div>
                 </div>
 
             </div>
+        
         </div>
     </div>
 </div>
@@ -571,6 +653,7 @@
         {
             id: 1,
             title: "SteamClock",
+            type: "normal", 
             icon: "1.png", 
             image: "https://assets.st-note.com/production/uploads/images/249412945/picture_pc_e67856a041e77ef1d5670b50d1aa2e1f.png", 
             desc: "一番最初に作成したスチームパンク風時計アプリです。",
@@ -580,6 +663,7 @@
         {
             id: 2,
             title: "CoffeeFactory",
+            type: "normal",
             icon: "2.png",
             image: "https://assets.st-note.com/production/uploads/images/249478392/picture_pc_400c563f39f55fa34f7c22ed9154d7e6.png",
             desc: "ほっと一息つきたい時に開く、絵本のようなコーヒータイマーアプリです。",
@@ -589,32 +673,54 @@
         {
             id: 3,
             title: "AmberTime",
+            type: "normal",
             icon: "3.png",
             image: "https://assets.st-note.com/production/uploads/images/251298722/picture_pc_41f4941b5fb971116403bf7f36b4075d.png",
             desc: "ドット絵で作成した、正解のないウイスキー蒸留所経営ゲームです。",
             link: "https://note.com/hamamah/n/n2123726a637c?sub_rt=share_b",
             hasBadge: false
         },
-                {
+        {
             id: 4,
             title: "IroMix",
+            type: "normal",
             icon: "4.png",
             image: "https://assets.st-note.com/production/uploads/images/252445104/picture_pc_6c40578c92817f8aba8bcb82b9874dbe.png",
-            desc: "色鉛筆の混色が楽になったらいいなと思って作ったアプリです。",
+            desc: "色鉛筆の混色が楽になったらいいなと思って作ったアプリです。",
             link: "https://note.com/hamamah/n/n56034020d77b",
             hasBadge: false
         },
-                {
+        {
             id: 5,
             title: "DotCleaner",
+            type: "normal",
             icon: "5.png",
             image: " ",
-            desc: "AIが作成するドット絵風画像を自分用に修正するためのアプリです。",
+            desc: "AIが作成するドット絵風画像を自分用に修正するためのアプリです。",
             link: " ",
             hasBadge: true
+        },
+        /* --- 追加: Profile --- */
+        {
+            id: 98,
+            title: "Profile",
+            type: "profile", 
+            icon: "gear.png", 
+            desc: "端末所有者の情報",
+            link: "#",
+            hasBadge: false
+        },
+        /* --- 追加: Mail --- */
+        {
+            id: 99,
+            title: "Mail",
+            type: "mail", 
+            icon: "mail.png", 
+            desc: "受信ボックス",
+            link: "#",
+            hasBadge: true 
         }
     ];
-
     // 壁紙プリセット (Unsplash & CSS Gradients)
     const wallpapers = [
         { name: "None", url: "" },
@@ -623,31 +729,29 @@
         { name: "Cat", url: "Cat.jpg" },
         { name: "Heart", url: "Heart.jpg" }
     ];
-
     /* =========================================
        SYSTEM & STATE
        ========================================= */
-    let systemState = 'active'; // active | idle | sleep | dev
+    let systemState = 'active';
+    // active | idle | sleep | dev
     let secretBuffer = "";
     let idleTimer = null;
     let powerHoldTimer = null;
     const IDLE_TIMEOUT_MS = 15000;
     const POWER_HOLD_MS = 2000;
     const START_TIME = Date.now();
-
     /* =========================================
        APP STATE
        ========================================= */
     let currentPage = 0;
     let cursorIndex = 0;
     let inDetailMode = false;
-    let scrollLock = false; 
-
+    let scrollLock = false;
     // Developer Menu State
     let devCursor = 0;
     let currentWallpaperIndex = 0;
 
-    const ITEMS_PER_PAGE = 9;
+    const ITEMS_PER_PAGE = 6;
     function getTotalPages() {
         return Math.max(1, Math.ceil(apps.length / ITEMS_PER_PAGE));
     }
@@ -672,7 +776,6 @@
             boot.style.transition = 'opacity 0.8s';
             setTimeout(() => { boot.style.display = 'none'; }, 800);
         }, 1500);
-
         // Load Wallpaper
         const savedWP = localStorage.getItem('sukima_wallpaper_idx');
         if (savedWP !== null) {
@@ -683,11 +786,9 @@
         renderGrid();
         updateClock();
         resetIdleTimer();
-
         detailView.addEventListener('wheel', (e) => {
             e.preventDefault();
         }, { passive: false });
-
         document.querySelectorAll('.num-key').forEach(el => {
             const key = el.getAttribute('data-key');
             el.addEventListener('pointerdown', (e) => {
@@ -722,7 +823,7 @@
         const el = document.getElementById('signal');
         if (!el) return;
         el.dataset.level = String(Math.max(0, Math.min(4, level)));
-        el.dataset.mode = mode; 
+        el.dataset.mode = mode;
     }
 
     /* --- OS State Management --- */
@@ -786,14 +887,12 @@
             { label: `Wallpaper: ${wallpapers[currentWallpaperIndex].name}`, action: "wallpaper" },
             { label: "System Info", action: "none" }
         ];
-
         let html = '';
         items.forEach((item, idx) => {
             const selected = (idx === devCursor) ? 'selected' : '';
             const marker = (idx === devCursor) ? '>' : ' ';
             html += `<div class="dev-line dev-item ${selected}"><span>${marker} ${item.label}</span></div>`;
         });
-        
         html += `<div class="dev-line" style="margin-top:10px; color:#050;">Uptime: ${getUptimeStr()}</div>`;
         container.innerHTML = html;
     }
@@ -803,10 +902,12 @@
             devCursor = Math.max(0, devCursor - 1);
             updateDevMenu();
         } else if (key === 'down') {
-            devCursor = Math.min(2, devCursor + 1); // Max 3 items
+            devCursor = Math.min(2, devCursor + 1);
+            // Max 3 items
             updateDevMenu();
         } else if (key === 'enter' || key === 'guide-center' || key === 'right') {
-            if (devCursor === 0) setSystemState('active'); // Exit
+            if (devCursor === 0) setSystemState('active');
+            // Exit
             if (devCursor === 1) cycleWallpaper();
         } else if (key === 'soft-left' || key === 'back') {
             setSystemState('active');
@@ -848,6 +949,25 @@
 
         resetIdleTimer();
 
+        // --- 追加: 通話ボタンの処理 ---
+        if (key === 'call') {
+            // 隠しコマンド等のフック場所
+            console.log("Call button pressed. Buffer:", secretBuffer);
+            
+            // 簡易演出: ステータスバーの日付を一瞬「Calling...」にする
+            const dateEl = document.getElementById('date-display');
+            const originalText = dateEl.textContent;
+            dateEl.textContent = "Calling...";
+            dateEl.style.color = "#0f0";
+            
+            setTimeout(() => {
+                dateEl.textContent = originalText;
+                dateEl.style.color = "";
+            }, 1500);
+            return;
+        }
+        // ---------------------------
+
         if (key === 'power') {
             transitionScreen(() => {
                 inDetailMode = false;
@@ -866,12 +986,14 @@
                 closeDetail();
                 return;
             }
-            if (key === 'down') { stepScroll(1); return; }
-            if (key === 'up')   { stepScroll(-1); return; }
+            if (key === 'down') { stepScroll(1); return;
+            }
+            if (key === 'up')   { stepScroll(-1);
+            return; }
 
             if (key === 'enter' || key === 'guide-center') {
                 const container = document.getElementById('detail-view');
-                if (container && isAtBottom(container, 6)) {
+                if (container) {
                     openLink();
                 }
                 return;
@@ -896,6 +1018,7 @@
                     if (currentPage < totalPages - 1) {
                         transitionScreen(() => {
                             currentPage++;
+                 
                             cursorIndex = 0;
                             renderGrid();
                         });
@@ -909,6 +1032,7 @@
                     if (currentPage > 0) {
                         transitionScreen(() => {
                             currentPage--;
+                   
                             cursorIndex = ITEMS_PER_PAGE - 1;
                             renderGrid();
                         });
@@ -945,13 +1069,14 @@
             const iconHTML = app.icon
                 ? `<img class="icon-png" src="${app.icon}">`
                 : `<span class="icon-fallback">📱</span>`;
-            
+         
             // Badge Logic
             const badgeHTML = app.hasBadge ? `<div class="app-badge"></div>` : '';
 
             div.innerHTML = `
                 ${badgeHTML}
                 <div class="icon-img">${iconHTML}</div>
+                
                 <div class="icon-label">${app.title}</div>
             `;
 
@@ -960,6 +1085,7 @@
                 renderGrid();
                 openDetail();
             };
+         
             gridEl.appendChild(div);
         });
         pageNumEl.textContent = `${currentPage + 1}/${totalPages}`;
@@ -989,6 +1115,7 @@
             else height -= Math.random() * 3;
             if (height <= 0) {
                 height = 0;
+        
                 clearInterval(interval);
             }
             if (height > 100) height = 100;
@@ -1007,7 +1134,8 @@
         if (!container || !linkItem) return;
         const focused = isAtBottom(container, 6);
         linkItem.classList.toggle('focused', focused);
-        guideCenter.textContent = focused ? "開く" : "—";
+        guideCenter.textContent = focused ?
+        "開く" : "—";
     }
 
     function stepScroll(direction) {
@@ -1027,22 +1155,65 @@
 
             const app = apps[appIndex];
             
-            const imgUrl = app.image || 'https://via.placeholder.com/240x160/222/555?text=NOW+LOADING...';
-             
-            detailContent.innerHTML = `
-                <div class="detail-title">${app.title}</div>
-                <div class="detail-item">
-                    <div class="img-container">
-                        <img src="${imgUrl}" class="detail-img">
-                        <div id="loading-curtain" class="img-curtain"></div>
+            // --- Typeによる分岐 ---
+            if (app.type === 'profile') {
+                // プロフィール画面
+                detailContent.innerHTML = `
+                    <div class="detail-title">Device Info</div>
+                    <div class="detail-desc" style="font-family:monospace; font-size:11px;">
+                        <span style="color:#888;">OWNER:</span> hamamah<br>
+                        <span style="color:#888;">LOC:</span> Skopje<br>
+                        <span style="color:#888;">DEVICE:</span> SukimaStock OS<br>
+                        <span style="color:#888;">BUILD:</span> wallpaper_mod<br>
+                        <span style="color:#888;">UPTIME:</span> ${getUptimeStr()}<br>
+                        <hr style="border:0; border-top:1px dashed #333; margin:10px 0;">
+                        ようこそ。<br>
+                        ここは私の制作物を保管する<br>
+                        小さな書庫のような場所です。
                     </div>
-                </div>
-                <div class="detail-desc">${app.desc.replace(/\n/g, '<br>')}</div>
-                <div id="detail-item-link" class="detail-item">
-                    <a href="${app.link}" target="_blank" class="note-link" id="target-link">Note記事を読む</a>
-                </div>
-                <div style="height:20px;"></div>
-            `;
+                    <div style="height:20px;"></div>
+                `;
+            } else if (app.type === 'mail') {
+                // メール画面
+                detailContent.innerHTML = `
+                    <div class="detail-title">Inbox (1)</div>
+                    <div class="detail-desc">
+                        <div style="background:#222; padding:5px; border-radius:4px; margin-bottom:10px;">
+                            <span style="color:#aaa;">From:</span> hamamah<br>
+                            <span style="color:#aaa;">Sub:</span> Welcome
+                        </div>
+                        このOSへようこそ。<br><br>
+                        ここは公開しなくてもいいアプリたちの静かな実験室です。<br>
+                        ゆっくりしていってください。<br><br>
+                        (このメールは返信できません)
+                    </div>
+                    <div style="height:20px;"></div>
+                `;
+            } else {
+                // 通常のアプリ画面 (既存ロジック)
+                const imgUrl = app.image && app.image.trim() !== "" 
+                    ? app.image 
+                    : 'https://via.placeholder.com/240x160/222/555?text=NO+IMAGE';
+                 
+                detailContent.innerHTML = `
+                    <div class="detail-title">${app.title}</div>
+                    <div class="detail-item">
+                        <div class="img-container">
+                            <img src="${imgUrl}" class="detail-img">
+                            <div id="loading-curtain" class="img-curtain"></div>
+                        </div>
+                    </div>
+                    <div class="detail-desc">${app.desc.replace(/\n/g, '<br>')}</div>
+                    
+                    ${app.link && app.link !== "#" ? `
+                    <div id="detail-item-link" class="detail-item">
+                        <a href="${app.link}" class="note-link" id="target-link">Note記事を読む</a>
+                    </div>` : ''}
+                    
+                    <div style="height:20px;"></div>
+                `;
+            }
+
             homeView.style.display = 'none';
             detailView.style.display = 'block';
             updateGuide();
@@ -1078,9 +1249,32 @@
     }
 
     function openLink() {
+        // 現在のアプリを取得して、リンクがない(Profile/Mail等)なら無視
+        const appIndex = currentPage * ITEMS_PER_PAGE + cursorIndex;
+        if (appIndex < apps.length) {
+            const app = apps[appIndex];
+            if (!app.link || app.link === "#") return;
+        }
+
         const link = document.getElementById('target-link');
         if(link && link.getAttribute('href') !== '#') {
-            window.open(link.href, '_blank');
+            // 接続演出
+            const overlay = document.getElementById('connect-overlay');
+            if(overlay) {
+                overlay.style.display = 'flex'; // 表示
+                
+                // 1.5秒後に遷移
+                setTimeout(() => {
+                    window.open(link.href, '_blank');
+                    // 遷移後にオーバーレイを隠す(戻ってきた時用)
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 500);
+                }, 1500);
+            } else {
+                // オーバーレイがない場合のフォールバック
+                window.open(link.href, '_blank');
+            }
         }
     }
 
@@ -1099,7 +1293,8 @@
         const clearHold = () => {
             holding = false;
             if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
-            if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+            if (holdInterval) { clearInterval(holdInterval);
+            holdInterval = null; }
             el.classList.remove('pressed');
         };
         const startHold = (e) => {
@@ -1149,13 +1344,13 @@
         });
     }
 
-    const keys = ['up','down','left','right','enter','back','soft-left','soft-right','power'];
+    // 'call' を追加
+    const keys = ['up','down','left','right','enter','back','soft-left','soft-right','power', 'call'];
     keys.forEach(k => {
         const el = document.getElementById(`btn-${k}`);
         if (!el) return;
         attachHoldRepeat(el, k);
     });
-
     document.addEventListener('keydown', (e) => {
         if (e.repeat) return; 
 
@@ -1164,7 +1359,8 @@
             case 'ArrowDown': e.preventDefault(); handleInput('down'); return;
             case 'ArrowLeft': handleInput('left'); return;
             case 'ArrowRight': handleInput('right'); return;
-            case 'Enter': handleInput('enter'); return;
+            case 'Enter': handleInput('enter'); 
+            return;
             case 'Backspace': handleInput('back'); return;
             case 'Escape': handleInput('power'); return;
             case '1': handleInput('soft-left'); return; 
@@ -1173,6 +1369,7 @@
 
         if (/^[0-9*#]$/.test(e.key)) {
             handleInput(e.key);
+        
             return;
         }
 
@@ -1180,7 +1377,6 @@
             setSystemState('active');
         }
     });
-
     function updateClock() {
         const now = new Date();
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -1195,7 +1391,6 @@
         
         document.getElementById('date-display').textContent = `${month}/${date} ${day}`;
         document.getElementById('clock').textContent = timeStr;
-        
         // Idle Screen Logic
         document.getElementById('idle-clock-disp').textContent = timeStr;
         const idleDateEl = document.getElementById('idle-date-disp');
@@ -1203,11 +1398,11 @@
         
         document.getElementById('sleep-clock-disp').textContent = timeStr;
         if (systemState === 'dev') {
-           updateDevMenu(); // Update uptime
+           updateDevMenu();
+           // Update uptime
         }
     }
     setInterval(updateClock, 1000);
-
 </script>
 </body>
 </html>
